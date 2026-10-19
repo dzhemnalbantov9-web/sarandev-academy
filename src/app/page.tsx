@@ -10,6 +10,8 @@ type ModalName =
   | "sofia"
   | "manicure"
   | "lashes"
+  | "lash-basic"
+  | "manicure-advanced"
   | "service-0"
   | "service-1"
   | "service-2"
@@ -138,7 +140,7 @@ function teamPhotoFallbacks(member: TeamMember) {
   ];
 }
 
-/* ================= УСЛУГИ И ОБУЧЕНИЯ ================= */
+/* ================= УСЛУГИ ================= */
 
 const aestheticServices = [
   "Устни",
@@ -203,6 +205,8 @@ const services = [
   },
 ];
 
+/* ================= ЧЕТИРИ ОБУЧЕНИЯ ================= */
+
 const courses = [
   {
     id: "manicure" as const,
@@ -222,7 +226,7 @@ const courses = [
     id: "lashes" as const,
     label: "ПРОФЕСИОНАЛНО ОБУЧЕНИЕ",
     image: "/images/course-lashes.png",
-    imageAlt: "Илюстративна снимка на миглостилистка, която поставя мигли",
+    imageAlt: "Илюстративна снимка на миглостилистка по време на работа",
     meta: "ТЕОРИЯ + ПРАКТИКА / 1 ИЛИ 2 ДНИ",
     title: "Ламиниране",
     subtitle: "на мигли",
@@ -232,12 +236,42 @@ const courses = [
     price: "300 €",
     priceNote: "1 ден / 2 дни — 450 €",
   },
+  {
+    id: "lash-basic" as const,
+    label: "БАЗОВО ОБУЧЕНИЕ",
+    image: "/images/course-lashes.png",
+    imageAlt: "Илюстративна снимка на поставяне на мигли",
+    meta: "4 ДНИ / ТЕОРИЯ + ПРАКТИКА",
+    title: "Базов курс",
+    subtitle: "по миглопластика",
+    description:
+      "От теорията до работата върху модел: косъм по косъм, обемни мигли, ръчни снопчета и ламиниране.",
+    tags: ["Осигурени материали", "Индивидуално или до 3 курсистки"],
+    price: "800 €",
+    priceNote: "за четиридневното обучение",
+  },
+  {
+    id: "manicure-advanced" as const,
+    label: "НАДГРАЖДАЩО ОБУЧЕНИЕ",
+    image: "/images/course-manicure.png",
+    imageAlt: "Илюстративна снимка на професионална работа по маникюр",
+    meta: "2 ДНИ / ТЕХНИКА И ПРЕЦИЗНОСТ",
+    title: "Надграждащо",
+    subtitle: "обучение по маникюр",
+    description:
+      "Усъвършенствай пиленето, изграждането, комбинирания маникюр и прецизното лакиране. Развий и своето професионално присъствие.",
+    tags: ["Практически техники", "Фирмен сертификат"],
+    price: "500 €",
+    priceNote: "за двудневното обучение",
+  },
 ];
 
 const courseOptions = [
   "Базов курс „Маникюр“ — 3 модула / 1 300 €",
   "Ламиниране на мигли — 1 ден / 300 €",
   "Ламиниране на мигли — 2 дни / 450 €",
+  "Базов курс по миглопластика — 4 дни / 800 €",
+  "Надграждащо обучение по маникюр — 2 дни / 500 €",
 ];
 
 const serviceOptions = services.flatMap((group) =>
@@ -1537,7 +1571,9 @@ function BookingForm() {
 export default function Home() {
   const [modal, setModal] = useState<ModalName>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
   const selectedService = services.find((service) => service.id === modal);
+  const selectedCourse = courses.find((course) => course.id === modal);
 
   function openBooking() {
     setModal(null);
@@ -1752,7 +1788,7 @@ export default function Home() {
             >
               <div className="cardTop">
                 <span className="pill">{course.label}</span>
-                <span>0{index + 1} /</span>
+                <span>{String(index + 1).padStart(2, "0")} /</span>
               </div>
 
               <div className="coursePhoto">
@@ -1999,14 +2035,12 @@ export default function Home() {
         open={modal !== null}
         onClose={() => setModal(null)}
         title={
-          selectedService?.title ??
-          (
-            modal === "sofia"
-              ? "София Сарандева"
-              : modal === "manicure"
-                ? "Базов курс „Маникюр“"
-                : "Ламиниране на мигли"
-          )
+          modal === "sofia"
+            ? "София Сарандева"
+            : selectedService?.title ??
+              (selectedCourse
+                ? `${selectedCourse.title} ${selectedCourse.subtitle}`
+                : "Sarandev Academy")
         }
       >
         {modal === "sofia" && (
@@ -2138,6 +2172,142 @@ export default function Home() {
               <p>Работа върху модел и фирмен сертификат.</p>
               <p>Преподавател: София Сарандева.</p>
               <p>Градове: Хасково и Пловдив.</p>
+            </div>
+
+            <button
+              className="button darkButton modalCta"
+              type="button"
+              onClick={openBooking}
+            >
+              Към заявка за обучение <span>↗</span>
+            </button>
+          </div>
+        )}
+
+        {modal === "lash-basic" && (
+          <div className="modalCopy">
+            <p className="eyebrow">4 ДНИ / 800 €</p>
+            <h2>Базов курс<br /><em>по миглопластика.</em></h2>
+            <p className="modalLead">
+              Теоретична подготовка и практика върху модели
+              със София Сарандева.
+            </p>
+
+            <h3>Ден 1 — теория и въведение</h3>
+            <ul>
+              <li>Обширна теория и въведение в миглопластиката</li>
+              <li>Фази на растеж на миглите</li>
+              <li>Подбор на материали</li>
+              <li>Анализ на видовете очи</li>
+              <li>Видове мигли — извивки, дебелини и дължини</li>
+              <li>Изучаване на различни мапинги</li>
+              <li>Тренировка върху кукла</li>
+            </ul>
+
+            <h3>Ден 2 — косъм по косъм</h3>
+            <p>
+              Практическа работа по техниката „Косъм по косъм“
+              върху жив модел.
+            </p>
+
+            <h3>Ден 3 — обемни мигли</h3>
+            <ul>
+              <li>Практика върху модел с обемни мигли</li>
+              <li>Тренировка за изработка на ръчни снопчета</li>
+            </ul>
+
+            <h3>Ден 4 — ламиниране на мигли</h3>
+            <ul>
+              <li>Теоретична подготовка за ламиниране на мигли</li>
+              <li>Практика върху модел</li>
+              <li>Финален тест за проверка на знанията</li>
+            </ul>
+
+            <h3>Организация и подкрепа</h3>
+            <p>
+              Всички материали по време на обучението са осигурени от нас.
+              Обученията се провеждат индивидуално или в група до 3 курсистки.
+              След обучението запазвате връзка с нас и получавате подкрепа.
+            </p>
+
+            <h3>След успешно завършване получавате</h3>
+            <ul>
+              <li>Лицензирано удостоверение от МОН</li>
+              <li>Европас за работа в чужбина</li>
+              <li>Фирмен сертификат</li>
+            </ul>
+
+            <div className="infoBox">
+              <h3>Информация за обучението</h3>
+              <p><strong>Цена: 800 €</strong></p>
+              <p>Продължителност: 4 дни.</p>
+              <p>Преподавател: София Сарандева.</p>
+              <p>Провежда се в Хасково и Пловдив.</p>
+            </div>
+
+            <button
+              className="button darkButton modalCta"
+              type="button"
+              onClick={openBooking}
+            >
+              Към заявка за обучение <span>↗</span>
+            </button>
+          </div>
+        )}
+
+        {modal === "manicure-advanced" && (
+          <div className="modalCopy">
+            <p className="eyebrow">НАДГРАЖДАЩО ОБУЧЕНИЕ / 2 ДНИ / 500 €</p>
+            <h2>Надграждащо обучение<br /><em>по маникюр.</em></h2>
+            <p className="modalLead">
+              Развий техниката, прецизността и професионалния си подход
+              със София Сарандева.
+            </p>
+
+            <h3>Пилене и оформяне</h3>
+            <ul>
+              <li>Три техники на пилене</li>
+              <li>Оформяне на бадем, квадрат и овал при къси нокти</li>
+              <li>
+                Изграждане с хартиени форми и правилното им поставяне
+                според избраната от клиента форма
+              </li>
+            </ul>
+
+            <h3>Комбиниран маникюр</h3>
+            <ul>
+              <li>Работа с електрическа пила</li>
+              <li>Премахване на кожички с различни видове фрези</li>
+              <li>Насечки на накрайниците и обороти за работа във всяка зона</li>
+              <li>Практически техники за омекотяване на кутикулата</li>
+            </ul>
+
+            <h3>Гел лак и прецизно лакиране</h3>
+            <ul>
+              <li>Гел лак с изравняване</li>
+              <li>Прецизно лакиране под кутикулата</li>
+              <li>
+                Видове бази и правилен подбор според нокътната плочка
+                на клиента
+              </li>
+            </ul>
+
+            <h3>Личностно и професионално развитие</h3>
+            <ul>
+              <li>Развитие на социалните мрежи и профила в Instagram</li>
+              <li>Подход и общуване с клиентите</li>
+              <li>Изграждане на професионално присъствие</li>
+            </ul>
+
+            <h3>След успешно завършване</h3>
+            <p>Получавате фирмен сертификат.</p>
+
+            <div className="infoBox">
+              <h3>Информация за обучението</h3>
+              <p><strong>Цена: 500 €</strong></p>
+              <p>Продължителност: 2 дни.</p>
+              <p>Преподавател: София Сарандева.</p>
+              <p>Провежда се в Хасково и Пловдив.</p>
             </div>
 
             <button
@@ -2322,26 +2492,26 @@ body{margin:0}
 .materialsBrands>span:not(.materialsAmpersand){font-size:clamp(14px,1.6vw,22px);font-weight:600;letter-spacing:2px;line-height:1.5}
 .materialsBrands .materialsAmpersand{font:italic 28px Georgia,serif;color:#a78b5b}
 
-/* ОБУЧЕНИЯ СЪС СНИМКИ */
+/* ОБУЧЕНИЯ */
 .courses{background:#f3f1ec}
 .courseGrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
 .courseCard{display:flex;flex-direction:column;min-width:0;border:1px solid #d6d2ca;background:#faf9f6;overflow:hidden}
 .darkCard{background:#191919;color:#fff;border-color:#191919}
 .cardTop{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:25px}
-.cardTop>span:last-child{font-size:10px;opacity:.55}
+.cardTop>span:last-child{font-size:10px;opacity:.55;white-space:nowrap}
 .coursePhoto{position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:3/2;margin:0 25px;overflow:hidden;background:#e8e1d6;flex-shrink:0}
 .coursePhoto>img,.coursePhoto>.photoFallback{display:block;width:100%;height:100%;min-height:0;object-fit:contain}
 .coursePhoto>.photoFallback{display:flex}
 .courseBody{display:flex;flex-direction:column;flex:1;padding:25px 30px 30px}
 .courseMeta{margin-bottom:18px!important;font-size:9px;letter-spacing:1.5px;color:#9b7c4e;line-height:1.8}
-.courseBody h3{font-size:42px;line-height:1.1;letter-spacing:-1.6px;font-weight:500}
+.courseBody h3{font-size:42px;line-height:1.1;letter-spacing:-1.6px;font-weight:500;overflow-wrap:break-word}
 .courseDescription{max-width:390px;min-height:75px;margin-top:22px!important;font-size:13px;line-height:1.85;opacity:.65}
 .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:23px;margin-bottom:30px}
-.tags span{border:1px solid #8885;padding:8px 11px;border-radius:25px;font-size:9px}
+.tags span{border:1px solid #8885;padding:8px 11px;border-radius:25px;font-size:9px;line-height:1.6}
 .courseFooter{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:auto;padding-top:25px;border-top:1px solid #8885}
 .price{font-size:32px;letter-spacing:-1px}
-.price small{display:block;margin-top:8px;font-size:10px;letter-spacing:0;opacity:.6}
-.courseButton{padding:10px 0;border:0;border-bottom:1px solid currentColor;color:inherit;background:transparent;font-size:11px!important}
+.price small{display:block;margin-top:8px;font-size:10px;letter-spacing:0;opacity:.6;line-height:1.7}
+.courseButton{padding:10px 0;border:0;border-bottom:1px solid currentColor;color:inherit;background:transparent;font-size:11px!important;flex-shrink:0}
 .courseButton span{padding-left:12px;font-size:22px}
 
 /* ПРОЦЕС */
@@ -2551,7 +2721,7 @@ body{margin:0}
 .dialogBar button>span{font-size:22px;line-height:1}
 .dialogBody{padding:35px 40px 40px}
 .saDialogWide .dialogBody{padding:0}
-.modalCopy h2{margin-top:12px;font-size:clamp(35px,5vw,57px)}
+.modalCopy h2{margin-top:12px;font-size:clamp(35px,5vw,57px);overflow-wrap:break-word}
 .modalCopy p:not(.eyebrow){margin-top:20px;color:#666;font-size:14px;line-height:1.95}
 .modalCopy .modalLead{color:#151515!important;font-size:20px!important}
 .modalCopy h3{margin-top:30px;font-size:21px;font-weight:500}
