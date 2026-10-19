@@ -1,0 +1,368 @@
+.adminShell {
+  min-height: 100vh;
+  background: #f4f2ed;
+  color: #191919;
+  padding: 0 5% 80px;
+  font-family: Arial, sans-serif;
+  line-height: 1.55;
+}
+
+.adminShell * {
+  box-sizing: border-box;
+}
+
+.adminShell a {
+  color: inherit;
+}
+
+.adminShell button,
+.adminShell input,
+.adminShell select,
+.adminShell textarea {
+  font: inherit;
+}
+
+.adminShell button {
+  cursor: pointer;
+  border: 1px solid #b6aa95;
+  background: #fff;
+  padding: 11px 17px;
+  border-radius: 4px;
+  color: #222;
+}
+
+.adminShell button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.adminShell button:focus-visible,
+.adminShell input:focus-visible,
+.adminShell select:focus-visible,
+.adminShell textarea:focus-visible {
+  outline: 3px solid #b3925e;
+  outline-offset: 2px;
+}
+
+.adminHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  background: #161616;
+  color: #fff;
+  padding: 25px;
+  margin: 0 -5.56% 35px;
+}
+
+.adminHeader > a {
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.adminHeader > a span {
+  display: block;
+  color: #c9a768;
+  font-size: 10px;
+  letter-spacing: 5px;
+}
+
+.adminHeader > span {
+  font-size: 12px;
+  color: #cbb89a;
+}
+
+.loginBox {
+  max-width: 440px;
+  margin: 8vh auto;
+  padding: 35px;
+  background: white;
+  border: 1px solid #d8cebf;
+  display: grid;
+  gap: 20px;
+}
+
+.adminShell label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+}
+
+.adminShell input,
+.adminShell select,
+.adminShell textarea {
+  width: 100%;
+  background: white;
+  color: #161616;
+  border: 1px solid #c8c1b6;
+  padding: 12px;
+  border-radius: 3px;
+  min-width: 0;
+}
+
+.adminShell textarea {
+  resize: vertical;
+}
+
+.adminShell .primary {
+  background: #1a1a1a;
+  color: white;
+  border-color: #1a1a1a;
+}
+
+.adminShell .danger {
+  color: #a12626;
+  border-color: #d7b2b2;
+}
+
+.kicker {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #987740;
+}
+
+.adminStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.adminStats article {
+  padding: 23px;
+  background: white;
+  border-top: 3px solid #b3925e;
+  display: grid;
+  gap: 8px;
+}
+
+.adminStats strong {
+  font-size: 36px;
+}
+
+.adminStats span {
+  font-size: 12px;
+  color: #776d5c;
+}
+
+.adminTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #d2c6b5;
+  padding-bottom: 20px;
+}
+
+.adminTabs button[aria-pressed="true"],
+.itemList button[aria-pressed="true"] {
+  background: #1b1b1b;
+  color: white;
+}
+
+.adminToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 25px 0;
+}
+
+.adminToolbar > div,
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.adminToolbar h1 {
+  font-size: 30px;
+  margin: 0;
+}
+
+.adminFilters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.adminFilters input,
+.adminFilters select {
+  width: auto;
+  flex: 1;
+  min-width: 160px;
+}
+
+.recordGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.recordCard {
+  padding: 25px;
+  background: white;
+  border: 1px solid #d8cebf;
+  overflow-wrap: anywhere;
+}
+
+.recordCard p {
+  margin: 14px 0;
+}
+
+.recordTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+
+.recordTop h2 {
+  font-size: 21px;
+  margin: 0;
+}
+
+.recordTop span {
+  font-size: 11px;
+  white-space: nowrap;
+  background: #ece5d9;
+  padding: 5px 10px;
+}
+
+.prewrap {
+  white-space: pre-wrap;
+}
+
+.priceSummary {
+  padding: 14px;
+  background: #f0e5d0;
+}
+
+.adminMessage,
+.draftNotice {
+  padding: 16px;
+  background: #eee2cc;
+  border: 1px solid #c8b792;
+}
+
+.adminMessage.error {
+  background: #f8e6e5;
+  border-color: #d49e9a;
+}
+
+.adminMessage.success {
+  background: #e7eee3;
+  border-color: #a1b593;
+}
+
+.editorLayout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 25px;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  align-self: start;
+}
+
+.itemList button {
+  text-align: left;
+  font-size: 13px;
+}
+
+.editorPanel {
+  background: white;
+  border: 1px solid #d8cebf;
+  padding: 25px;
+  min-width: 0;
+}
+
+.editorPanel fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.editorFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.editorFields .wide {
+  grid-column: 1 / -1;
+}
+
+.variantRow {
+  display: grid;
+  grid-template-columns: 1fr 120px auto;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.wide > label {
+  margin-bottom: 12px;
+}
+
+.adminShell h3 {
+  font-size: 18px;
+}
+
+.adminShell p {
+  font-size: 14px;
+}
+
+.rowActions {
+  margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+  .adminStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .recordGrid,
+  .editorLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .adminToolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adminHeader > span {
+    display: none;
+  }
+
+  .editorFields {
+    grid-template-columns: 1fr;
+  }
+
+  .variantRow {
+    grid-template-columns: 1fr 100px;
+  }
+
+  .variantRow button {
+    grid-column: 1 / -1;
+  }
+
+  .loginBox {
+    padding: 25px;
+  }
+
+  .itemList {
+    max-height: 250px;
+    overflow: auto;
+  }
+
+  .editorPanel {
+    padding: 18px;
+  }
+}

@@ -1,32 +1,29 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import type { FormEvent, ReactNode } from "react";
 import { createClient } from "@supabase/supabase-js";
+import {
+  euro,
+  discounted,
+  courseOption,
+  serviceOption,
+  validContent,
+} from "../lib/academy-types";
+import type { Content, TeamMember } from "../lib/academy-types";
 
-/* ================= ТИПОВЕ ================= */
-
-type ModalName =
-  | "sofia"
-  | "manicure"
-  | "lashes"
-  | "lash-basic"
-  | "manicure-advanced"
-  | "service-0"
-  | "service-1"
-  | "service-2"
-  | "service-3"
-  | null;
-
-type TeamMember = {
-  name: string;
-  role: string;
-  city: string;
-  phone: string;
-  tel: string;
-  image: string;
-  description?: string;
-};
+const ContentContext = createContext<Content>({
+  courses: [],
+  services: [],
+  team: [],
+});
 
 type GalleryPhoto = {
   src: string;
@@ -42,8 +39,6 @@ type Review = {
   rating: number;
   comment: string;
 };
-
-/* ================= КОНТАКТИ И СНИМКИ ================= */
 
 const academyPhone = "0876 667 797";
 const academyTel = "+359876667797";
@@ -75,241 +70,6 @@ const biography = [
   "За София красотата не е просто професия – тя е страст, призвание и мисия да създава уверени, знаещи и успешни специалисти!",
 ];
 
-const team: TeamMember[] = [
-  {
-    name: "София Сарандева",
-    role: "Основател и преподавател",
-    city: "Хасково и Пловдив",
-    phone: academyPhone,
-    tel: academyTel,
-    image: "/images/sofia.jpg",
-    description:
-      "Провежда професионални обучения в Sarandev Academy в Хасково и Пловдив.",
-  },
-  {
-    name: "Гергана Панайотова",
-    role: "Маникюрист",
-    city: "Хасково",
-    phone: "087 898 8694",
-    tel: "+359878988694",
-    image: "/images/team/gergana.jfif",
-  },
-  {
-    name: "Даниела Конарова",
-    role: "Миглостилист",
-    city: "Хасково",
-    phone: "088 614 5337",
-    tel: "+359886145337",
-    image: "/images/team/daniela.jfif",
-  },
-  {
-    name: "Аделина Иванова",
-    role: "Маникюрист",
-    city: "Пловдив",
-    phone: "+359 89 453 5398",
-    tel: "+359894535398",
-    image: "/images/team/adelina.jfif",
-  },
-  {
-    name: "Мерлин Георгиева",
-    role: "Миглостилист",
-    city: "Пловдив",
-    phone: "+359 89 782 6675",
-    tel: "+359897826675",
-    image: "/images/team/merlin.jfif",
-  },
-];
-
-function teamPhotoFallbacks(member: TeamMember) {
-  if (member.name === "София Сарандева") {
-    return ["/images/sSofia.jpg", "/sSofia.jpg", "/sofia.jpg"];
-  }
-
-  const filename = member.image.split("/").pop() ?? "";
-  const name = filename.replace(/\.[^.]+$/, "");
-
-  return [
-    `/images/team/${name}.jpg`,
-    `/images/team/${name}.jpeg`,
-    `/images/team/${name}.png`,
-    `/images/${name}.jfif`,
-    `/images/${name}.jpg`,
-    `/images/${name}.png`,
-    `/${name}.jfif`,
-    `/${name}.jpg`,
-  ];
-}
-
-/* ================= УСЛУГИ ================= */
-
-const aestheticServices = [
-  "Устни",
-  "Скули",
-  "Jawline",
-  "Корекция на нос",
-  "Брадичка",
-  "Микроблейдинг",
-];
-
-const services = [
-  {
-    id: "service-0" as const,
-    title: "Маникюр & педикюр",
-    description: "Малките детайли правят голямото впечатление.",
-    image: "/images/manicure.png",
-    alt: "Илюстративна снимка на маникюр",
-    items: [
-      "Маникюр с гел лак",
-      "Маникюр — поддръжка",
-      "Изграждане",
-      "Педикюр",
-      "Спа педикюр",
-    ],
-  },
-  {
-    id: "service-1" as const,
-    title: "Миглопластика",
-    description: "Подчертай своя поглед. Запази своя характер.",
-    image: "/images/lashes.png",
-    alt: "Илюстративна снимка на миглопластика",
-    items: [
-      "Косъм по косъм",
-      "2–3D обемни мигли",
-      "Мега обем",
-      "Wispy ефект",
-      "Очна линия",
-      "Арабски ефект",
-    ],
-  },
-  {
-    id: "service-2" as const,
-    title: "Козметика",
-    description: "Грижа за кожата. Време само за теб.",
-    image: "/images/cosmetics.png",
-    alt: "Илюстративна снимка на козметична процедура",
-    items: [
-      "Почистване на лице",
-      "Кола маска — цяло тяло",
-      "Кола маска — вежди",
-      "RF кавитация",
-      "Пресотерапия",
-    ],
-  },
-  {
-    id: "service-3" as const,
-    title: "Естетична корекция",
-    description: "С Гюнюл Мерт — гостува всеки месец от Турция.",
-    image: gulselPhoto,
-    alt: "Гюнюл Мерт",
-    items: aestheticServices,
-  },
-];
-
-/* ================= ЧЕТИРИ ОБУЧЕНИЯ ================= */
-
-const courses = [
-  {
-    id: "manicure" as const,
-    label: "БАЗОВО ОБУЧЕНИЕ",
-    image: "/images/course-manicure.png",
-    imageAlt: "Илюстративна снимка на маникюристка по време на работа",
-    meta: "3 МОДУЛА / 5 ДНИ",
-    title: "Базов курс",
-    subtitle: "„Маникюр“",
-    description:
-      "От първите движения до завършената работа. Теория и практика в три основни направления.",
-    tags: ["Маникюр", "Педикюр", "Ноктопластика"],
-    price: "1 300 €",
-    priceNote: "за трите модула",
-  },
-  {
-    id: "lashes" as const,
-    label: "ПРОФЕСИОНАЛНО ОБУЧЕНИЕ",
-    image: "/images/course-lashes.png",
-    imageAlt: "Илюстративна снимка на миглостилистка по време на работа",
-    meta: "ТЕОРИЯ + ПРАКТИКА / 1 ИЛИ 2 ДНИ",
-    title: "Ламиниране",
-    subtitle: "на мигли",
-    description:
-      "Естествено красиви, извити и подхранени мигли. Научи техниката с внимание към всеки детайл.",
-    tags: ["Работа върху модел", "Фирмен сертификат"],
-    price: "300 €",
-    priceNote: "1 ден / 2 дни — 450 €",
-  },
-  {
-    id: "lash-basic" as const,
-    label: "БАЗОВО ОБУЧЕНИЕ",
-    image: "/images/course-lashes.png",
-    imageAlt: "Илюстративна снимка на поставяне на мигли",
-    meta: "4 ДНИ / ТЕОРИЯ + ПРАКТИКА",
-    title: "Базов курс",
-    subtitle: "по миглопластика",
-    description:
-      "От теорията до работата върху модел: косъм по косъм, обемни мигли, ръчни снопчета и ламиниране.",
-    tags: ["Осигурени материали", "Индивидуално или до 3 курсистки"],
-    price: "800 €",
-    priceNote: "за четиридневното обучение",
-  },
-  {
-    id: "manicure-advanced" as const,
-    label: "НАДГРАЖДАЩО ОБУЧЕНИЕ",
-    image: "/images/course-manicure.png",
-    imageAlt: "Илюстративна снимка на професионална работа по маникюр",
-    meta: "2 ДНИ / ТЕХНИКА И ПРЕЦИЗНОСТ",
-    title: "Надграждащо",
-    subtitle: "обучение по маникюр",
-    description:
-      "Усъвършенствай пиленето, изграждането, комбинирания маникюр и прецизното лакиране. Развий и своето професионално присъствие.",
-    tags: ["Практически техники", "Фирмен сертификат"],
-    price: "500 €",
-    priceNote: "за двудневното обучение",
-  },
-];
-
-const courseOptions = [
-  "Базов курс „Маникюр“ — 3 модула / 1 300 €",
-  "Ламиниране на мигли — 1 ден / 300 €",
-  "Ламиниране на мигли — 2 дни / 450 €",
-  "Базов курс по миглопластика — 4 дни / 800 €",
-  "Надграждащо обучение по маникюр — 2 дни / 500 €",
-];
-
-const serviceOptions = services.flatMap((group) =>
-  group.items.map((item) =>
-    group.id === "service-1"
-      ? `Миглопластика — ${item}`
-      : group.id === "service-3"
-        ? `Естетична корекция — ${item}`
-        : item
-  )
-);
-
-const lashTheory = [
-  "Анатомия и структура на естествените мигли",
-  "Фази на растеж и жизнен цикъл на миглите",
-  "Какво представлява ламинирането и как действа",
-  "Професионални продукти и тяхното приложение",
-  "Видове силиконови подложки и подбор според формата на окото",
-  "Анализ на естествените мигли и избор на подходяща техника",
-  "Последователност на процедурата и време на действие на продуктите",
-  "Боядисване и подхранване на миглите",
-  "Хигиена, дезинфекция и безопасност",
-  "Противопоказания и възможни алергични реакции",
-  "Най-често допускани грешки и как да ги избегнем",
-  "Последваща грижа и препоръки към клиента",
-];
-
-const lashPractice = [
-  "Подготовка на работното място и клиента",
-  "Демонстрация на процедурата от преподавателя",
-  "Правилно поставяне на силиконови подложки",
-  "Прецизно подреждане и фиксиране на миглите",
-  "Нанасяне и отстраняване на професионалните продукти",
-  "Боядисване и финална подхранваща грижа",
-  "Самостоятелна работа върху реален модел под наблюдение",
-  "Анализ на резултата и индивидуални насоки за усъвършенстване",
-];
-
 const locations = [
   {
     id: "haskovo",
@@ -324,8 +84,6 @@ const locations = [
     query: "Пловдив улица Петко Д. Петков 74",
   },
 ];
-
-/* ================= ГАЛЕРИЯ ================= */
 
 const galleryPhotos: GalleryPhoto[] = [
   {
@@ -457,8 +215,6 @@ const correctionPhotos: GalleryPhoto[] = Array.from(
   }
 );
 
-/* ================= СОЦИАЛНИ МРЕЖИ ================= */
-
 const socialLinks = [
   {
     id: "instagram" as const,
@@ -480,7 +236,31 @@ const socialLinks = [
   },
 ];
 
-function SocialIcon({ name }: { name: "instagram" | "facebook" | "tiktok" }) {
+function teamPhotoFallbacks(member: TeamMember) {
+  if (member.name === "София Сарандева") {
+    return ["/images/sSofia.jpg", "/sSofia.jpg", "/sofia.jpg"];
+  }
+
+  const filename = member.image.split("/").pop() ?? "";
+  const name = filename.replace(/\.[^.]+$/, "");
+
+  return [
+    `/images/team/${name}.jpg`,
+    `/images/team/${name}.jpeg`,
+    `/images/team/${name}.png`,
+    `/images/${name}.jfif`,
+    `/images/${name}.jpg`,
+    `/images/${name}.png`,
+    `/${name}.jfif`,
+    `/${name}.jpg`,
+  ];
+}
+
+function SocialIcon({
+  name,
+}: {
+  name: "instagram" | "facebook" | "tiktok";
+}) {
   if (name === "instagram") {
     return (
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -520,8 +300,6 @@ function SocialIcon({ name }: { name: "instagram" | "facebook" | "tiktok" }) {
   );
 }
 
-/* ================= ПОМОЩНИ ФУНКЦИИ ================= */
-
 function getSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -553,8 +331,6 @@ function todayInSofia() {
   return `${part("year")}-${part("month")}-${part("day")}`;
 }
 
-/* ================= СНИМКИ ================= */
-
 function Photo({
   src,
   alt,
@@ -569,7 +345,6 @@ function Photo({
   eager?: boolean;
 }) {
   const candidateKey = JSON.stringify([src, ...fallbacks]);
-
   const [status, setStatus] = useState({
     key: candidateKey,
     attempt: 0,
@@ -607,8 +382,6 @@ function Photo({
   );
 }
 
-/* ================= ПРОЗОРЕЦ ================= */
-
 function Dialog({
   open,
   onClose,
@@ -635,7 +408,6 @@ function Dialog({
     const previousOverflow = document.body.style.overflow;
 
     if (!dialog.open) dialog.showModal();
-
     dialog.scrollTop = 0;
     document.body.style.overflow = "hidden";
 
@@ -670,8 +442,6 @@ function Dialog({
     </dialog>
   );
 }
-
-/* ================= ГАЛЕРИЯ ================= */
 
 function PhotoGallery({
   photos,
@@ -778,7 +548,8 @@ function PhotoGallery({
               }
             }}
             onTouchStart={(event) => {
-              touchStart.current = event.changedTouches[0]?.clientX ?? null;
+              touchStart.current =
+                event.changedTouches[0]?.clientX ?? null;
             }}
             onTouchEnd={(event) => {
               const start = touchStart.current;
@@ -834,11 +605,9 @@ function PhotoGallery({
   );
 }
 
-/* ================= ЕКИП ================= */
-
 function TeamSection({ onSofia }: { onSofia: () => void }) {
+  const { team } = useContext(ContentContext);
   const [city, setCity] = useState("Всички");
-
   const visible = team.filter(
     (member) => city === "Всички" || member.city.includes(city)
   );
@@ -911,9 +680,14 @@ function TeamSection({ onSofia }: { onSofia: () => void }) {
   );
 }
 
-/* ================= ГОСТУВАЩ СПЕЦИАЛИСТ ================= */
-
 function GuestSection() {
+  const { services } = useContext(ContentContext);
+  const guestService = services.find(
+    (service) => service.id === "service-3"
+  );
+
+  if (!guestService) return null;
+
   return (
     <section id="aesthetics" className="guestSection">
       <div className="guestIntro">
@@ -927,7 +701,9 @@ function GuestSection() {
         </div>
 
         <div className="guestCopy">
-          <p className="eyebrow">ГОСТУВА НИ ВСЕКИ МЕСЕЦ ОТ ТУРЦИЯ</p>
+          <p className="eyebrow">
+            ГОСТУВА НИ ВСЕКИ МЕСЕЦ ОТ ТУРЦИЯ
+          </p>
           <h2>Гюнюл Мерт.<br /><em>Естетична корекция.</em></h2>
 
           <p className="guestDescription">
@@ -940,7 +716,9 @@ function GuestSection() {
           </div>
 
           <div className="guestServices">
-            {aestheticServices.map((item) => <span key={item}>{item}</span>)}
+            {guestService.items.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
           </div>
 
           <div className="productNote">
@@ -977,8 +755,6 @@ function GuestSection() {
   );
 }
 
-/* ================= ОТЗИВИ ================= */
-
 function ReviewsSection() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -993,12 +769,13 @@ function ReviewsSection() {
 
     async function loadReviews() {
       try {
-        const { data, error: databaseError } = await getSupabaseClient()
-          .from("reviews")
-          .select("id, customer_name, rating, comment")
-          .eq("approved", true)
-          .order("created_at", { ascending: false })
-          .limit(12);
+        const { data, error: databaseError } =
+          await getSupabaseClient()
+            .from("reviews")
+            .select("id, customer_name, rating, comment")
+            .eq("approved", true)
+            .order("created_at", { ascending: false })
+            .limit(12);
 
         if (databaseError) throw databaseError;
 
@@ -1110,7 +887,9 @@ function ReviewsSection() {
         <div className="reviewsGrid">
           {reviews.map((review) => (
             <article className="reviewCard" key={review.id}>
-              <p className="reviewRating">Оценка {review.rating} от 5</p>
+              <p className="reviewRating">
+                Оценка {review.rating} от 5
+              </p>
               <p className="reviewText">{review.comment}</p>
               <h3>{review.customer_name}</h3>
             </article>
@@ -1122,8 +901,14 @@ function ReviewsSection() {
         <div className="formAside">
           <p className="eyebrow">ОСТАВИ ОТЗИВ</p>
           <h3>Твоето мнение<br /><em>има значение.</em></h3>
-          <p>Името, оценката и коментарът ще бъдат публични след одобрение.</p>
-          <p>Не включвай телефон, имейл или други лични данни в коментара.</p>
+          <p>
+            Името, оценката и коментарът ще бъдат публични
+            след одобрение.
+          </p>
+          <p>
+            Не включвай телефон, имейл или други лични данни
+            в коментара.
+          </p>
         </div>
 
         <form className="saForm" onSubmit={submitReview}>
@@ -1179,10 +964,14 @@ function ReviewsSection() {
           </fieldset>
 
           {error && (
-            <p className="formMessage errorMessage" role="alert">{error}</p>
+            <p className="formMessage errorMessage" role="alert">
+              {error}
+            </p>
           )}
           {success && (
-            <p className="formMessage successMessage" role="status">{success}</p>
+            <p className="formMessage successMessage" role="status">
+              {success}
+            </p>
           )}
         </form>
       </div>
@@ -1190,10 +979,41 @@ function ReviewsSection() {
   );
 }
 
-/* ================= ЗАПИСВАНЕ ================= */
+function DiscountBanner() {
+  return (
+    <aside className="discountBanner">
+      <span className="discountPercent">−5%</span>
+
+      <div>
+        <p className="eyebrow">ТВОЕТО ОНЛАЙН ПРЕДИМСТВО</p>
+        <h3>
+          Запиши се през сайта.<br />
+          <em>Започни с 5% отстъпка.</em>
+        </h3>
+        <p>
+          За всеки курс при записване през сайта. Отстъпката се
+          отразява в заявката и важи при потвърдено записване.
+        </p>
+      </div>
+
+      <a className="button goldButton" href="#booking">
+        Избери обучение ↗
+      </a>
+    </aside>
+  );
+}
 
 function BookingForm() {
-  const [bookingType, setBookingType] = useState<"service" | "course">("service");
+  const { courses, services, team } = useContext(ContentContext);
+  const courseOptions = courses.flatMap((c) =>
+    c.variants.map((v) => courseOption(c, v))
+  );
+  const serviceOptions = services.flatMap((s) =>
+    s.items.map((item) => serviceOption(s, item))
+  );
+
+  const [bookingType, setBookingType] =
+    useState<"service" | "course">("service");
   const [salon, setSalon] = useState("");
   const [offering, setOffering] = useState("");
   const [specialist, setSpecialist] = useState("");
@@ -1202,23 +1022,39 @@ function BookingForm() {
   const [success, setSuccess] = useState("");
   const submitLock = useRef(false);
 
-  const options = bookingType === "service" ? serviceOptions : courseOptions;
-  const city = locations.find((location) => location.id === salon)?.city;
-  const isAesthetic = offering.startsWith("Естетична корекция");
+  const options =
+    bookingType === "service" ? serviceOptions : courseOptions;
+
+  const city = locations.find(
+    (location) => location.id === salon
+  )?.city;
+
+  const selectedGroup = services.find((s) =>
+    s.items.some((item) => serviceOption(s, item) === offering)
+  );
+
+  const selectedCourse = courses.find((c) =>
+    c.variants.some((v) => courseOption(c, v) === offering)
+  );
+
+  const selectedVariantIndex =
+    selectedCourse?.variants.findIndex(
+      (v) => courseOption(selectedCourse, v) === offering
+    ) ?? -1;
+
+  const selectedVariant =
+    selectedCourse?.variants[selectedVariantIndex];
+
+  const isAesthetic = selectedGroup?.id === "service-3";
 
   const availableSpecialists = team.filter((member) => {
     if (member.name === "София Сарандева") return false;
     if (city && !member.city.includes(city)) return false;
 
-    if (services[0].items.includes(offering)) {
-      return member.role === "Маникюрист";
-    }
-
-    if (offering.startsWith("Миглопластика")) {
-      return member.role === "Миглостилист";
-    }
-
-    return false;
+    return (
+      !!selectedGroup?.specialistRole &&
+      member.role.includes(selectedGroup.specialistRole)
+    );
   });
 
   function changeType(type: "service" | "course") {
@@ -1238,6 +1074,7 @@ function BookingForm() {
 
     const form = event.currentTarget;
     const data = new FormData(form);
+
     const customerName = String(data.get("customer_name") ?? "").trim();
     const phone = String(data.get("phone") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
@@ -1281,7 +1118,9 @@ function BookingForm() {
       bookingType === "service" &&
       !isAesthetic &&
       specialist &&
-      !availableSpecialists.some((member) => member.name === specialist)
+      !availableSpecialists.some(
+        (member) => member.name === specialist
+      )
     ) {
       setError("Избери специалист за избраните град и услуга.");
       return;
@@ -1289,7 +1128,7 @@ function BookingForm() {
 
     const selectedSpecialist =
       bookingType === "course"
-        ? "София Сарандева"
+        ? selectedCourse?.instructor ?? "София Сарандева"
         : isAesthetic
           ? "Гюнюл Мерт"
           : specialist;
@@ -1304,17 +1143,20 @@ function BookingForm() {
 
     try {
       const { error: databaseError } = await getSupabaseClient()
-        .from("bookings")
-        .insert({
-          salon,
-          booking_type: bookingType,
-          offering,
-          preferred_date: preferredDate,
-          preferred_time: preferredTime,
-          customer_name: customerName,
-          phone,
-          email: email || null,
-          note: finalNote || null,
+        .rpc("academy_submit_booking", {
+          p_booking: {
+            salon,
+            booking_type: bookingType,
+            offering,
+            preferred_date: preferredDate,
+            preferred_time: preferredTime,
+            customer_name: customerName,
+            phone,
+            email: email || null,
+            note: finalNote || null,
+            course_id: selectedCourse?.id ?? null,
+            variant_index: selectedVariantIndex,
+          },
         });
 
       if (databaseError) {
@@ -1338,12 +1180,31 @@ function BookingForm() {
       );
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Възникна грешка. Опитай отново."
+        err instanceof Error
+          ? err.message
+          : "Възникна грешка. Опитай отново."
       );
     } finally {
       submitLock.current = false;
       setSubmitting(false);
     }
+  }
+
+  function servicePriceLabel(option: string) {
+    const group = services.find((s) =>
+      s.items.some((item) => serviceOption(s, item) === option)
+    );
+
+    if (!group) return "";
+
+    const item = group.items.find(
+      (item) => serviceOption(group, item) === option
+    );
+
+    if (!item) return "";
+
+    const price = group.itemPrices[item];
+    return price != null ? ` / ${euro(price)}` : "";
   }
 
   return (
@@ -1358,6 +1219,24 @@ function BookingForm() {
           предпочитаните дата и час.
         </p>
       </div>
+
+      <DiscountBanner />
+
+      {bookingType === "course" && selectedVariant && (
+        <p className="discountQuote" role="status">
+          Стандартна цена: {euro(selectedVariant.price)}
+          {" · "}Отстъпка 5%:{" "}
+          {euro(
+            selectedVariant.price -
+            discounted(selectedVariant.price)
+          )}
+          {" · "}
+          <strong>
+            Цена при записване през сайта:{" "}
+            {euro(discounted(selectedVariant.price))}
+          </strong>
+        </p>
+      )}
 
       <div className="formLayout">
         <aside className="formAside">
@@ -1374,8 +1253,8 @@ function BookingForm() {
           <div className="bookingNotice">
             <strong>Важно за записването</strong>
             <p>
-              Това е заявка за предпочитан час. Записването е валидно
-              след потвърждение.
+              Това е заявка за предпочитан час. Записването е
+              валидно след потвърждение.
             </p>
             <p>
               Обученията се провеждат от София Сарандева
@@ -1431,7 +1310,9 @@ function BookingForm() {
               </label>
 
               <label className="fullWidth">
-                <span>{bookingType === "service" ? "Услуга *" : "Обучение *"}</span>
+                <span>
+                  {bookingType === "service" ? "Услуга *" : "Обучение *"}
+                </span>
                 <select
                   name="offering"
                   value={offering}
@@ -1442,17 +1323,28 @@ function BookingForm() {
                   required
                 >
                   <option value="">
-                    {bookingType === "service" ? "Избери услуга" : "Избери обучение"}
+                    {bookingType === "service"
+                      ? "Избери услуга"
+                      : "Избери обучение"}
                   </option>
+
                   {options.map((option) => (
-                    <option key={option} value={option}>{option}</option>
+                    <option key={option} value={option}>
+                      {option}
+                      {bookingType === "service"
+                        ? servicePriceLabel(option)
+                        : ""}
+                    </option>
                   ))}
                 </select>
               </label>
 
               {bookingType === "course" ? (
                 <div className="formInfo fullWidth">
-                  Преподавател: <strong>София Сарандева</strong>
+                  Преподавател:{" "}
+                  <strong>
+                    {selectedCourse?.instructor ?? "София Сарандева"}
+                  </strong>
                 </div>
               ) : isAesthetic ? (
                 <div className="formInfo fullWidth">
@@ -1465,11 +1357,15 @@ function BookingForm() {
                   <select
                     name="specialist"
                     value={specialist}
-                    onChange={(event) => setSpecialist(event.target.value)}
+                    onChange={(event) =>
+                      setSpecialist(event.target.value)
+                    }
                     disabled={!salon}
                   >
                     <option value="">
-                      {salon ? "Без предпочитание" : "Първо избери салон"}
+                      {salon
+                        ? "Без предпочитание"
+                        : "Първо избери салон"}
                     </option>
                     {availableSpecialists.map((member) => (
                       <option key={member.name} value={member.name}>
@@ -1482,14 +1378,21 @@ function BookingForm() {
 
               <label>
                 <span>
-                  {bookingType === "course" ? "Желана начална дата *" : "Желана дата *"}
+                  {bookingType === "course"
+                    ? "Желана начална дата *"
+                    : "Желана дата *"}
                 </span>
                 <input name="preferred_date" type="date" required />
               </label>
 
               <label>
                 <span>Желан час *</span>
-                <input name="preferred_time" type="time" step={900} required />
+                <input
+                  name="preferred_time"
+                  type="time"
+                  step={900}
+                  required
+                />
               </label>
 
               <p className="formHint fullWidth">
@@ -1545,7 +1448,8 @@ function BookingForm() {
             </div>
 
             <p className="formPrivacy">
-              Използваме предоставените данни за връзка с теб относно тази заявка.
+              Използваме предоставените данни за връзка с теб
+              относно тази заявка.
             </p>
 
             <button type="submit" className="formSubmit">
@@ -1555,10 +1459,14 @@ function BookingForm() {
           </fieldset>
 
           {error && (
-            <p className="formMessage errorMessage" role="alert">{error}</p>
+            <p className="formMessage errorMessage" role="alert">
+              {error}
+            </p>
           )}
           {success && (
-            <p className="formMessage successMessage" role="status">{success}</p>
+            <p className="formMessage successMessage" role="status">
+              {success}
+            </p>
           )}
         </form>
       </div>
@@ -1566,21 +1474,113 @@ function BookingForm() {
   );
 }
 
-/* ================= СТРАНИЦА ================= */
-
 export default function Home() {
-  const [modal, setModal] = useState<ModalName>(null);
+  const [content, setContent] = useState<Content | null>(null);
+  const [contentError, setContentError] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function load() {
+      try {
+        const { data, error } = await getSupabaseClient()
+          .from("academy_content")
+          .select("data")
+          .eq("id", 1)
+          .single();
+
+        if (error || !validContent(data?.data)) {
+          throw error ?? new Error("Невалидно съдържание");
+        }
+
+        if (active) {
+          setContent(data.data);
+          setContentError(false);
+        }
+      } catch {
+        if (active) setContentError(true);
+      }
+    }
+
+    void load();
+
+    const refresh = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+
+    return () => {
+      active = false;
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
+
+  if (!content) {
+    return (
+      <main
+        style={{
+          padding: "12vh 8%",
+          background: "#161616",
+          color: "#fff",
+          minHeight: "100vh",
+        }}
+      >
+        <h1>SARANDEV ACADEMY</h1>
+        <p role="status">
+          {contentError
+            ? "Съдържанието временно не е достъпно. Моля, опитайте отново."
+            : "Зареждане…"}
+        </p>
+
+        {contentError && (
+          <button onClick={() => window.location.reload()}>
+            Опитай отново
+          </button>
+        )}
+
+        <p>
+          <a style={{ color: "#d4b785" }} href={`tel:${academyTel}`}>
+            {academyPhone}
+          </a>
+          {" · "}
+          <a style={{ color: "#d4b785" }} href="/admin">
+            Админ вход
+          </a>
+        </p>
+      </main>
+    );
+  }
+
+  return (
+    <ContentContext.Provider value={content}>
+      <AcademyHome />
+    </ContentContext.Provider>
+  );
+}
+
+function AcademyHome() {
+  const { courses, services, team } = useContext(ContentContext);
+  const [modal, setModal] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const selectedService = services.find((service) => service.id === modal);
-  const selectedCourse = courses.find((course) => course.id === modal);
+  const selectedService = services.find(
+    (service) => service.id === modal
+  );
+  const selectedCourse = courses.find(
+    (course) => course.id === modal
+  );
 
   function openBooking() {
     setModal(null);
 
     window.requestAnimationFrame(() => {
       document.getElementById("booking")?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        behavior: window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches
           ? "auto"
           : "smooth",
       });
@@ -1592,7 +1592,11 @@ export default function Home() {
       <style>{styles}</style>
 
       <header className="header">
-        <a href="#home" className="brand" aria-label="Sarandev Academy — начало">
+        <a
+          href="#home"
+          className="brand"
+          aria-label="Sarandev Academy — начало"
+        >
           SARANDEV<span>ACADEMY</span>
         </a>
 
@@ -1619,12 +1623,20 @@ export default function Home() {
             ["#gallery", "Галерия"],
             ["#contact", "Контакти"],
           ].map(([href, label]) => (
-            <a key={href} href={href} onClick={() => setMenuOpen(false)}>
+            <a
+              key={href}
+              href={href}
+              onClick={() => setMenuOpen(false)}
+            >
               {label}
             </a>
           ))}
 
-          <a href="#booking" className="navCta" onClick={() => setMenuOpen(false)}>
+          <a
+            href="#booking"
+            className="navCta"
+            onClick={() => setMenuOpen(false)}
+          >
             Запиши се <span>↗</span>
           </a>
         </nav>
@@ -1653,7 +1665,11 @@ export default function Home() {
 
           <div className="heroBottom">
             <span>ТВОЯТ НОВ ПЪТ ЗАПОЧВА ТУК</span>
-            <a href="#about" className="scrollArrow" aria-label="Продължи надолу">
+            <a
+              href="#about"
+              className="scrollArrow"
+              aria-label="Продължи надолу"
+            >
               ↓
             </a>
           </div>
@@ -1662,16 +1678,22 @@ export default function Home() {
         <div className="portrait">
           <Photo
             src="/images/sofia.jpg"
-            fallbacks={teamPhotoFallbacks(team[0])}
+            fallbacks={[
+              "/images/sSofia.jpg",
+              "/sSofia.jpg",
+              "/sofia.jpg",
+            ]}
             alt="София Сарандева — основател на Sarandev Academy"
             className="portraitImage"
             eager
           />
+
           <div className="portraitShade" />
           <p className="portraitTop">THE WOMAN BEHIND THE ACADEMY</p>
 
           <div className="experienceBadge">
-            <strong>7+</strong><span>ГОДИНИ<br />СТРАСТ И ОПИТ</span>
+            <strong>7+</strong>
+            <span>ГОДИНИ<br />СТРАСТ И ОПИТ</span>
           </div>
 
           <div className="portraitCaption">
@@ -1708,15 +1730,17 @@ export default function Home() {
 
           <div className="aboutColumns">
             <p>
-              Зад Sarandev Academy стои София Сарандева — професионалист
-              с над 7 години опит, собственик на два салона за красота
-              и преподавател, който вярва в потенциала на всеки курсист.
+              Зад Sarandev Academy стои София Сарандева —
+              професионалист с над 7 години опит, собственик
+              на два салона за красота и преподавател, който
+              вярва в потенциала на всеки курсист.
             </p>
+
             <div>
               <p>
                 Учим чрез практика, внимание и споделен опит.
-                За да си тръгнеш със знания, увереност и ясна посока
-                за следващата си стъпка.
+                За да си тръгнеш със знания, увереност и ясна
+                посока за следващата си стъпка.
               </p>
               <button
                 className="textLink"
@@ -1731,15 +1755,23 @@ export default function Home() {
 
           <div className="stats">
             <div><strong>7+</strong><span>години опит</span></div>
-            <div><strong>40+</strong><span>професионални обучения</span></div>
+            <div>
+              <strong>40+</strong>
+              <span>професионални обучения</span>
+            </div>
             <div><strong>2</strong><span>салона за красота</span></div>
           </div>
         </div>
       </section>
 
-      <section className="materialsOffer" aria-labelledby="materials-title">
+      <section
+        className="materialsOffer"
+        aria-labelledby="materials-title"
+      >
         <div className="materialsNumber">
-          <span className="pill">ПРЕДИМСТВО ЗА НАШИТЕ КУРСИСТИ</span>
+          <span className="pill">
+            ПРЕДИМСТВО ЗА НАШИТЕ КУРСИСТИ
+          </span>
           <strong>−20<span>%</span></strong>
           <small>ЗА ПРОДУКТИ ЗА МАНИКЮР</small>
         </div>
@@ -1751,12 +1783,18 @@ export default function Home() {
           </h2>
           <p>
             Запиши се и завърши успешно курс в
-            <strong> Sarandev Academy</strong>, за да се възползваш
-            след това от <strong>20% отстъпка при покупка на продукти
-            за маникюр от VELOUR & THE BLACK BOTTLE.</strong>
+            <strong> Sarandev Academy</strong>, за да се
+            възползваш след това от{" "}
+            <strong>
+              20% отстъпка при покупка на продукти за маникюр
+              от VELOUR & THE BLACK BOTTLE.
+            </strong>
           </p>
 
-          <div className="materialsBrands" aria-label="VELOUR и THE BLACK BOTTLE">
+          <div
+            className="materialsBrands"
+            aria-label="VELOUR и THE BLACK BOTTLE"
+          >
             <span>VELOUR</span>
             <span className="materialsAmpersand">&</span>
             <span>THE BLACK BOTTLE</span>
@@ -1780,10 +1818,16 @@ export default function Home() {
           </p>
         </div>
 
+        <DiscountBanner />
+
         <div className="courseGrid">
           {courses.map((course, index) => (
             <article
-              className={`courseCard ${course.id === "lashes" ? "darkCard" : ""}`}
+              className={`courseCard ${
+                (Math.floor(index / 2) + index % 2) % 2 === 1
+                  ? "darkCard"
+                  : ""
+              }`}
               key={course.id}
             >
               <div className="cardTop">
@@ -1792,22 +1836,42 @@ export default function Home() {
               </div>
 
               <div className="coursePhoto">
-                <Photo src={course.image} alt={course.imageAlt} />
+                <Photo
+                  src={course.image}
+                  alt={course.imageAlt}
+                />
               </div>
 
               <div className="courseBody">
                 <p className="courseMeta">{course.meta}</p>
                 <h3>{course.title}<br />{course.subtitle}</h3>
-                <p className="courseDescription">{course.description}</p>
+                <p className="courseDescription">
+                  {course.description}
+                </p>
 
                 <div className="tags">
-                  {course.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                  {course.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
                 </div>
 
                 <div className="courseFooter">
                   <div className="price">
-                    {course.price}<small>{course.priceNote}</small>
+                    {euro(course.variants[0].price)}
+
+                    <small>
+                      {course.variants
+                        .map((v) => `${v.label}: ${euro(v.price)}`)
+                        .join(" · ")}
+                    </small>
+
+                    <small className="onlinePrice">
+                      През сайта от{" "}
+                      {euro(discounted(course.variants[0].price))}
+                      {" "}(−5%)
+                    </small>
                   </div>
+
                   <button
                     type="button"
                     className="courseButton"
@@ -1834,9 +1898,18 @@ export default function Home() {
 
         <div className="processGrid">
           {[
-            ["Разбираш.", "Започваме с теорията, материалите и правилната подготовка."],
-            ["Практикуваш.", "Прилагаш наученото с демонстрации и насоки от преподавателя."],
-            ["Надграждаш.", "Развиваш техниката, прецизността и увереността си."],
+            [
+              "Разбираш.",
+              "Започваме с теорията, материалите и правилната подготовка.",
+            ],
+            [
+              "Практикуваш.",
+              "Прилагаш наученото с демонстрации и насоки от преподавателя.",
+            ],
+            [
+              "Надграждаш.",
+              "Развиваш техниката, прецизността и увереността си.",
+            ],
           ].map(([title, text], index) => (
             <article className="processCard" key={title}>
               <span>0{index + 1}</span>
@@ -1848,7 +1921,10 @@ export default function Home() {
       </section>
 
       <section className="statement">
-        <p>Талантът е началото.<br /><em>Практиката прави разликата.</em></p>
+        <p>
+          Талантът е началото.<br />
+          <em>Практиката прави разликата.</em>
+        </p>
         <small>SARANDEV ACADEMY</small>
       </section>
 
@@ -1867,7 +1943,9 @@ export default function Home() {
         <div className="serviceGrid">
           {services.map((service, index) => (
             <button
-              className={`serviceTile ${service.id === "service-3" ? "guestServiceTile" : ""}`}
+              className={`serviceTile ${
+                service.id === "service-3" ? "guestServiceTile" : ""
+              }`}
               type="button"
               key={service.id}
               onClick={() => setModal(service.id)}
@@ -1881,15 +1959,22 @@ export default function Home() {
               <span className="servicePhoto">
                 <Photo
                   src={service.image}
-                  fallbacks={service.id === "service-3" ? gulselFallbacks : []}
+                  fallbacks={
+                    service.id === "service-3"
+                      ? gulselFallbacks
+                      : []
+                  }
                   alt={service.alt}
                 />
               </span>
 
               <span className="tileTitle">{service.title}</span>
-              <span className="tileDescription">{service.description}</span>
+              <span className="tileDescription">
+                {service.description}
+              </span>
               <span className="tileBottom">
-                Разгледай услугите <span aria-hidden="true">+</span>
+                Разгледай услугите
+                <span aria-hidden="true">+</span>
               </span>
             </button>
           ))}
@@ -1912,7 +1997,10 @@ export default function Home() {
         </div>
 
         <PhotoGallery photos={galleryPhotos} filters />
-        <p className="galleryBottom">МАЛКИТЕ ДЕТАЙЛИ. ГОЛЯМОТО ВДЪХНОВЕНИЕ.</p>
+
+        <p className="galleryBottom">
+          МАЛКИТЕ ДЕТАЙЛИ. ГОЛЯМОТО ВДЪХНОВЕНИЕ.
+        </p>
       </section>
 
       <ReviewsSection />
@@ -1943,7 +2031,9 @@ export default function Home() {
 
               <div className="locationTeam">
                 {team
-                  .filter((member) => member.city === location.city)
+                  .filter(
+                    (member) => member.city === location.city
+                  )
                   .map((member) => (
                     <a
                       className="locationMember"
@@ -1963,11 +2053,17 @@ export default function Home() {
                         <strong>{member.name}</strong>
                         <small>{member.role}</small>
                         <span className="locationMemberPhone">
-                          {member.phone} <span aria-hidden="true">↗</span>
+                          {member.phone}
+                          {" "}<span aria-hidden="true">↗</span>
                         </span>
                       </span>
 
-                      <span className="locationMemberArrow" aria-hidden="true">↗</span>
+                      <span
+                        className="locationMemberArrow"
+                        aria-hidden="true"
+                      >
+                        ↗
+                      </span>
                     </a>
                   ))}
               </div>
@@ -1987,7 +2083,9 @@ export default function Home() {
         <div className="socialStrip">
           <div>
             <p className="eyebrow">ОСТАНИ В НАШИЯ СВЯТ</p>
-            <p>Вдъхновение, обучения и красота — последвай ни.</p>
+            <p>
+              Вдъхновение, обучения и красота — последвай ни.
+            </p>
           </div>
 
           <div className="socialLinks">
@@ -2006,7 +2104,12 @@ export default function Home() {
                   <small>{social.label}</small>
                   <strong>{social.name}</strong>
                 </span>
-                <span className="socialButtonArrow" aria-hidden="true">↗</span>
+                <span
+                  className="socialButtonArrow"
+                  aria-hidden="true"
+                >
+                  ↗
+                </span>
               </a>
             ))}
           </div>
@@ -2014,7 +2117,9 @@ export default function Home() {
       </section>
 
       <section className="closing">
-        <span className="closingOutline" aria-hidden="true">ACADEMY</span>
+        <span className="closingOutline" aria-hidden="true">
+          ACADEMY
+        </span>
         <div>
           <p className="eyebrow">НАПРАВИ СЛЕДВАЩАТА СТЪПКА</p>
           <h2>Твоят талант.<br /><em>Твоето бъдеще.</em></h2>
@@ -2025,10 +2130,15 @@ export default function Home() {
       </section>
 
       <footer className="footer">
-        <a href="#home" className="brand">SARANDEV<span>ACADEMY</span></a>
+        <a href="#home" className="brand">
+          SARANDEV<span>ACADEMY</span>
+        </a>
         <p>Красота. Знания. Увереност.</p>
         <span>© 2026 Sarandev Academy</span>
-        <a href="#home" className="backTop" aria-label="Към началото">↑</a>
+        <a href="/admin">Админ вход</a>
+        <a href="#home" className="backTop" aria-label="Към началото">
+          ↑
+        </a>
       </footer>
 
       <Dialog
@@ -2051,7 +2161,9 @@ export default function Home() {
               Професионализъм, отдаденост и стремеж към съвършенство!
             </p>
 
-            {biography.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            {biography.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
 
             <div className="infoBox">
               <h3>Обучения в Хасково и Пловдив</h3>
@@ -2074,240 +2186,43 @@ export default function Home() {
           </div>
         )}
 
-        {modal === "manicure" && (
+        {selectedCourse && (
           <div className="modalCopy">
-            <p className="eyebrow">3 МОДУЛА / 5 ДНИ / 1 300 €</p>
-            <h2>Базов курс<br /><em>„Маникюр“</em></h2>
-            <p className="modalLead">Маникюр, педикюр и ноктопластика.</p>
-
-            <h3>Теоретична подготовка</h3>
-            <p>
-              Стартираме с обширна теория, като въвеждаме курсиста в света
-              на маникюра и разглеждаме материалите, инструментите и уредите.
-              Включена е тема за болестите по ноктите. В края на курса се
-              преминава през тест за проверка на знанията.
+            <p className="eyebrow">
+              {selectedCourse.label} / {selectedCourse.meta}
+            </p>
+            <h2>
+              {selectedCourse.title}<br />
+              <em>{selectedCourse.subtitle}</em>
+            </h2>
+            <p className="modalLead">
+              {selectedCourse.description}
             </p>
 
-            <h3>Практическа подготовка</h3>
-            <ul>
-              <li>Класически маникюр с гел лак</li>
-              <li>Укрепване на ноктите</li>
-              <li>Изравняване на нокътната плочка</li>
-              <li>Различни техники за работа и руски маникюр</li>
-              <li>Ноктопластика с хартиени и горни форми</li>
-              <li>Частичен и спа педикюр</li>
-              <li>Правилна работа с електрическа пила</li>
-            </ul>
-
-            <h3>Какво получавате след курса</h3>
-            <p>
-              Кратък урок за развитие в сферата на красотата и стратегии
-              за работа, които да подкрепят първите ви професионални стъпки.
-            </p>
-            <p>
-              Удостоверение, сертификат и Европас за работа в чужбина.
-              Посоченият максимален срок за получаване на лицензирания документ
-              е 30 дни след обучението във връзка с вписването в МОН.
-            </p>
-
-            <div className="infoBox">
-              <h3>Продължителност и плащане</h3>
-              <p><strong>Общо за трите модула: 1 300 €</strong></p>
-              <p>Обучение: 5 дни според избраните модули.</p>
-              <p>Продължителност: от 2 до 4 часа на ден.</p>
-              <p>Капаро за запазване на дата: 300 €.</p>
-              <p>Плащане на обучението — в първия ден на курса.</p>
-              <p>Преподавател: София Сарандева.</p>
-              <p>Градове: Хасково и Пловдив.</p>
+            <div className="courseProgram">
+              {selectedCourse.program
+                .split("\n")
+                .filter(Boolean)
+                .map((line, index) => (
+                  <p key={index}>{line}</p>
+                ))}
             </div>
 
-            <button
-              className="button darkButton modalCta"
-              type="button"
-              onClick={openBooking}
-            >
-              Към заявка за обучение <span>↗</span>
-            </button>
-          </div>
-        )}
-
-        {modal === "lashes" && (
-          <div className="modalCopy">
-            <p className="eyebrow">ПРОФЕСИОНАЛНО ОБУЧЕНИЕ</p>
-            <h2>Ламиниране<br /><em>на мигли.</em></h2>
-            <p className="modalLead">
-              Овладей изкуството на естествено красивите,
-              извити и подхранени мигли!
-            </p>
-            <p>
-              Курсът съчетава теоретични знания и практическо обучение,
-              за да ти даде увереност и умения за професионална работа.
-            </p>
-
-            <h3>Теоретична част</h3>
-            <ul>{lashTheory.map((item) => <li key={item}>{item}</li>)}</ul>
-
-            <h3>Практическа част</h3>
-            <ul>{lashPractice.map((item) => <li key={item}>{item}</li>)}</ul>
-
-            <h3>Допълнителни знания</h3>
-            <ul>
-              <li>Професионална консултация с клиент</li>
-              <li>Определяне на цените на услугите</li>
-              <li>Портфолио със снимки „преди и след“</li>
-              <li>Привличане на клиенти и развитие на услугата</li>
-            </ul>
-
-            <h3>Защо да избереш Sarandev Academy?</h3>
-            <p>
-              Обучението е насочено към изграждане на реални практически
-              умения, прецизност и увереност. Получаваш професионални знания,
-              индивидуално внимание и съвети, базирани на опита на преподавателя.
-            </p>
-
             <div className="infoBox">
-              <h3>Продължителност и цена</h3>
-              <p><strong>1 ден — 300 €</strong></p>
-              <p><strong>2 дни — 450 €</strong></p>
-              <p>Работа върху модел и фирмен сертификат.</p>
-              <p>Преподавател: София Сарандева.</p>
-              <p>Градове: Хасково и Пловдив.</p>
-            </div>
+              <h3>Цена и записване</h3>
 
-            <button
-              className="button darkButton modalCta"
-              type="button"
-              onClick={openBooking}
-            >
-              Към заявка за обучение <span>↗</span>
-            </button>
-          </div>
-        )}
+              {selectedCourse.variants.map((v, i) => (
+                <p key={i}>
+                  {v.label}: <strong>{euro(v.price)}</strong><br />
+                  През сайта с 5% отстъпка:{" "}
+                  <strong>{euro(discounted(v.price))}</strong>
+                </p>
+              ))}
 
-        {modal === "lash-basic" && (
-          <div className="modalCopy">
-            <p className="eyebrow">4 ДНИ / 800 €</p>
-            <h2>Базов курс<br /><em>по миглопластика.</em></h2>
-            <p className="modalLead">
-              Теоретична подготовка и практика върху модели
-              със София Сарандева.
-            </p>
-
-            <h3>Ден 1 — теория и въведение</h3>
-            <ul>
-              <li>Обширна теория и въведение в миглопластиката</li>
-              <li>Фази на растеж на миглите</li>
-              <li>Подбор на материали</li>
-              <li>Анализ на видовете очи</li>
-              <li>Видове мигли — извивки, дебелини и дължини</li>
-              <li>Изучаване на различни мапинги</li>
-              <li>Тренировка върху кукла</li>
-            </ul>
-
-            <h3>Ден 2 — косъм по косъм</h3>
-            <p>
-              Практическа работа по техниката „Косъм по косъм“
-              върху жив модел.
-            </p>
-
-            <h3>Ден 3 — обемни мигли</h3>
-            <ul>
-              <li>Практика върху модел с обемни мигли</li>
-              <li>Тренировка за изработка на ръчни снопчета</li>
-            </ul>
-
-            <h3>Ден 4 — ламиниране на мигли</h3>
-            <ul>
-              <li>Теоретична подготовка за ламиниране на мигли</li>
-              <li>Практика върху модел</li>
-              <li>Финален тест за проверка на знанията</li>
-            </ul>
-
-            <h3>Организация и подкрепа</h3>
-            <p>
-              Всички материали по време на обучението са осигурени от нас.
-              Обученията се провеждат индивидуално или в група до 3 курсистки.
-              След обучението запазвате връзка с нас и получавате подкрепа.
-            </p>
-
-            <h3>След успешно завършване получавате</h3>
-            <ul>
-              <li>Лицензирано удостоверение от МОН</li>
-              <li>Европас за работа в чужбина</li>
-              <li>Фирмен сертификат</li>
-            </ul>
-
-            <div className="infoBox">
-              <h3>Информация за обучението</h3>
-              <p><strong>Цена: 800 €</strong></p>
-              <p>Продължителност: 4 дни.</p>
-              <p>Преподавател: София Сарандева.</p>
-              <p>Провежда се в Хасково и Пловдив.</p>
-            </div>
-
-            <button
-              className="button darkButton modalCta"
-              type="button"
-              onClick={openBooking}
-            >
-              Към заявка за обучение <span>↗</span>
-            </button>
-          </div>
-        )}
-
-        {modal === "manicure-advanced" && (
-          <div className="modalCopy">
-            <p className="eyebrow">НАДГРАЖДАЩО ОБУЧЕНИЕ / 2 ДНИ / 500 €</p>
-            <h2>Надграждащо обучение<br /><em>по маникюр.</em></h2>
-            <p className="modalLead">
-              Развий техниката, прецизността и професионалния си подход
-              със София Сарандева.
-            </p>
-
-            <h3>Пилене и оформяне</h3>
-            <ul>
-              <li>Три техники на пилене</li>
-              <li>Оформяне на бадем, квадрат и овал при къси нокти</li>
-              <li>
-                Изграждане с хартиени форми и правилното им поставяне
-                според избраната от клиента форма
-              </li>
-            </ul>
-
-            <h3>Комбиниран маникюр</h3>
-            <ul>
-              <li>Работа с електрическа пила</li>
-              <li>Премахване на кожички с различни видове фрези</li>
-              <li>Насечки на накрайниците и обороти за работа във всяка зона</li>
-              <li>Практически техники за омекотяване на кутикулата</li>
-            </ul>
-
-            <h3>Гел лак и прецизно лакиране</h3>
-            <ul>
-              <li>Гел лак с изравняване</li>
-              <li>Прецизно лакиране под кутикулата</li>
-              <li>
-                Видове бази и правилен подбор според нокътната плочка
-                на клиента
-              </li>
-            </ul>
-
-            <h3>Личностно и професионално развитие</h3>
-            <ul>
-              <li>Развитие на социалните мрежи и профила в Instagram</li>
-              <li>Подход и общуване с клиентите</li>
-              <li>Изграждане на професионално присъствие</li>
-            </ul>
-
-            <h3>След успешно завършване</h3>
-            <p>Получавате фирмен сертификат.</p>
-
-            <div className="infoBox">
-              <h3>Информация за обучението</h3>
-              <p><strong>Цена: 500 €</strong></p>
-              <p>Продължителност: 2 дни.</p>
-              <p>Преподавател: София Сарандева.</p>
-              <p>Провежда се в Хасково и Пловдив.</p>
+              <p>
+                Преподавател: {selectedCourse.instructor}.
+                Градове: Хасково и Пловдив.
+              </p>
             </div>
 
             <button
@@ -2324,13 +2239,25 @@ export default function Home() {
           <div className="modalCopy">
             <p className="eyebrow">SARANDEV ACADEMY / УСЛУГИ</p>
             <h2>{selectedService.title}</h2>
-            <p className="modalLead">{selectedService.description}</p>
+            <p className="modalLead">
+              {selectedService.description}
+            </p>
 
             <ul className="serviceModalList">
               {selectedService.items.map((item, index) => (
                 <li key={item}>
-                  <small>{String(index + 1).padStart(2, "0")}</small>
-                  <span>{item}</span>
+                  <small>
+                    {String(index + 1).padStart(2, "0")}
+                  </small>
+                  <span>
+                    {item}
+                    {selectedService.itemPrices[item] != null && (
+                      <strong>
+                        {" · "}
+                        {euro(selectedService.itemPrices[item]!)}
+                      </strong>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -2344,25 +2271,32 @@ export default function Home() {
                     alt="Гюнюл Мерт"
                   />
                 </div>
+
                 <div className="infoBox">
                   <h3>Гюнюл Мерт</h3>
-                  <p>Гостува всеки месец от Турция в Хасково и Пловдив.</p>
-                  <p>Филър, с който работи: <strong>Elasty</strong>.</p>
-                  <p>Датите се уточняват предварително при записване.</p>
+                  <p>
+                    Гостува всеки месец от Турция
+                    в Хасково и Пловдив.
+                  </p>
+                  <p>
+                    Филър, с който работи: <strong>Elasty</strong>.
+                  </p>
+                  <p>
+                    Датите се уточняват предварително при записване.
+                  </p>
                 </div>
               </>
             )}
 
-            {(selectedService.id === "service-0" ||
-              selectedService.id === "service-1") && (
+            {selectedService.specialistRole && (
               <div className="modalSpecialists">
                 <h3>Специалисти</h3>
 
                 {team
                   .filter((member) =>
-                    selectedService.id === "service-0"
-                      ? member.role === "Маникюрист"
-                      : member.role === "Миглостилист"
+                    member.role.includes(
+                      selectedService.specialistRole
+                    )
                   )
                   .map((member) => (
                     <a
@@ -2401,9 +2335,22 @@ export default function Home() {
   );
 }
 
-/* ================= СТИЛОВЕ ================= */
-
 const styles = `
+.discountBanner{display:flex;align-items:center;gap:32px;padding:35px;margin:0 0 32px;background:#171717;color:#fff;border:1px solid #b3925e}
+.discountPercent{font-size:clamp(58px,7vw,100px);line-height:1;color:#d6b47a;letter-spacing:-5px}
+.discountBanner h3{font-size:clamp(23px,3vw,35px);line-height:1.2;margin:10px 0}
+.discountBanner>div{flex:1}
+.discountBanner p:not(.eyebrow){font-size:12px;line-height:1.8;opacity:.8;max-width:560px}
+.discountBanner .eyebrow{color:#d6b47a}
+.discountQuote{padding:20px;margin:0 0 24px;background:#eee5d4;line-height:1.9}
+.onlinePrice{color:#a6844f;opacity:1!important}
+.courseProgram p{white-space:pre-wrap}
+@media(max-width:700px){
+.discountBanner{flex-direction:column;align-items:flex-start;padding:26px}
+.discountBanner h3{font-size:26px}
+.discountPercent{font-size:70px}
+}
+
 html{scroll-behavior:smooth;scroll-padding-top:105px}
 body{margin:0}
 .academy{--ink:#151515;--gold:#c7a66d;--paper:#faf9f6;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow-x:clip}
@@ -2431,7 +2378,6 @@ body{margin:0}
 .photoFallback{display:flex;min-height:220px;align-items:center;justify-content:center;flex-direction:column;background:#242424;color:#c7a66d;padding:30px;text-align:center}
 .photoFallback small{max-width:220px;font-size:12px;line-height:1.8}
 
-/* НАВИГАЦИЯ */
 .header{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:30px;min-height:94px;padding:19px 5%;background:#faf9f6f5;backdrop-filter:blur(18px);border-bottom:1px solid #15151512}
 .brand{display:inline-flex;flex-direction:column;flex-shrink:0;font-size:27px;font-weight:800;letter-spacing:-1px;line-height:1}
 .brand span{margin-top:8px;padding-left:2px;font-size:9px;font-weight:400;letter-spacing:6px}
@@ -2442,7 +2388,6 @@ body{margin:0}
 .navCta span{font-size:20px}
 .menuToggle{display:none}
 
-/* HERO */
 .hero{display:grid;grid-template-columns:1fr 1fr}
 .heroCopy{display:flex;flex-direction:column;padding:55px 10% 25px 12%;min-height:760px}
 .statusDot{width:7px;height:7px;border-radius:50%;background:#c7a66d;box-shadow:0 0 0 5px #c7a66d18;flex-shrink:0}
@@ -2467,7 +2412,6 @@ body{margin:0}
 .valuesBar{display:flex;justify-content:center;align-items:center;gap:50px;padding:27px 5%;border-bottom:1px solid #ddd;background:#f1eee7}
 .valuesBar span{font-size:10px;letter-spacing:2px}
 
-/* ЗА НАС */
 .about{display:grid;grid-template-columns:.35fr 1fr;gap:65px}
 .aboutColumns{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:32px}
 .aboutColumns p{color:#777;font-size:14px;line-height:1.95}
@@ -2476,7 +2420,6 @@ body{margin:0}
 .stats strong{display:block;font:58px/1.1 Georgia,serif}
 .stats span{display:block;margin-top:10px;font-size:11px;color:#777}
 
-/* ОТСТЪПКА */
 .materialsOffer{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:center;position:relative;padding:70px 8%;overflow:hidden;background:radial-gradient(ellipse at 10% 50%,#c7a66d20,transparent 60%),#151515;color:#fff}
 .materialsNumber{display:flex;align-items:center;flex-direction:column;color:#d6b985}
 .materialsNumber .pill{font-size:8px}
@@ -2492,7 +2435,6 @@ body{margin:0}
 .materialsBrands>span:not(.materialsAmpersand){font-size:clamp(14px,1.6vw,22px);font-weight:600;letter-spacing:2px;line-height:1.5}
 .materialsBrands .materialsAmpersand{font:italic 28px Georgia,serif;color:#a78b5b}
 
-/* ОБУЧЕНИЯ */
 .courses{background:#f3f1ec}
 .courseGrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
 .courseCard{display:flex;flex-direction:column;min-width:0;border:1px solid #d6d2ca;background:#faf9f6;overflow:hidden}
@@ -2514,7 +2456,6 @@ body{margin:0}
 .courseButton{padding:10px 0;border:0;border-bottom:1px solid currentColor;color:inherit;background:transparent;font-size:11px!important;flex-shrink:0}
 .courseButton span{padding-left:12px;font-size:22px}
 
-/* ПРОЦЕС */
 .processSymbol{font-size:95px;color:#b3925e;line-height:.8}
 .processGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:45px}
 .processCard{padding-top:25px;border-top:1px solid #bbb}
@@ -2525,7 +2466,6 @@ body{margin:0}
 .statement p{flex:1;font-size:clamp(24px,3vw,43px);line-height:1.3;letter-spacing:-1px}
 .statement small{writing-mode:vertical-rl;font-size:8px;letter-spacing:2px}
 
-/* УСЛУГИ */
 .serviceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px;align-items:stretch}
 .serviceTile{display:flex;flex-direction:column;min-width:0;height:100%;border:1px solid #d9d5cc;background:#fff;padding:25px;color:#151515;text-align:left;transition:transform .3s,border-color .3s}
 .serviceTile:hover{transform:translateY(-6px);border-color:#b2915d}
@@ -2542,7 +2482,6 @@ body{margin:0}
 .guestServiceTile .servicePhoto{background:#eeeae3}
 .guestServiceTile .servicePhoto>img{object-fit:contain;object-position:center;transform:none!important}
 
-/* ЕКИП */
 .teamSection{background:#eeeae3}
 .filterButtons{display:flex;flex-wrap:wrap;gap:9px}
 .filterButtons button{padding:11px 20px;border-radius:30px;border:1px solid #9997;background:transparent;color:inherit;font-size:11px;transition:background .2s,color .2s}
@@ -2562,7 +2501,6 @@ body{margin:0}
 .teamPhone>span{font-size:20px;color:#9b7a47}
 .teamBody .textLink{align-self:flex-start;margin-top:15px}
 
-/* ГОСТУВАЩ СПЕЦИАЛИСТ */
 .guestSection{padding:90px 6%;background:#151515;color:#fff}
 .guestIntro{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:center}
 .guestPortrait{position:relative;background:#242424;overflow:hidden;display:flex;align-items:center;justify-content:center}
@@ -2586,7 +2524,6 @@ body{margin:0}
 .guestPortfolio .eyebrow{color:#c7a66d}
 .guestPortfolio .sectionIntro{color:#aaa}
 
-/* ГАЛЕРИЯ */
 .gallerySection{background:#1d1d1d;color:#fff}
 .gallerySection .eyebrow{color:#c7a66d}
 .gallerySection .sectionIntro{color:#aaa}
@@ -2610,7 +2547,6 @@ body{margin:0}
 .compactGallery .galleryCard{aspect-ratio:1/1}
 .compactGallery .galleryCaption strong{font-size:21px}
 
-/* ОТЗИВИ И ФОРМИ */
 .reviewsSection{background:#f2eee6}
 .reviewsNotice{font-size:14px;line-height:1.9;color:#777}
 .reviewsGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-bottom:40px}
@@ -2654,7 +2590,6 @@ body{margin:0}
 .errorMessage{background:#fff0f0;color:#a32323;border:1px solid #efcaca}
 .successMessage{background:#edf6ee;color:#23512c;border:1px solid #c6dfca}
 
-/* КОНТАКТИ */
 .contactPhone{font-size:clamp(22px,2.7vw,38px);letter-spacing:-1px;white-space:nowrap}
 .contactPhone>span{display:block;margin-bottom:13px;font-size:8px;color:#888;letter-spacing:1.5px}
 .locationGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px}
@@ -2679,7 +2614,6 @@ body{margin:0}
 .locationLink{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:20px;margin-top:20px;border-top:1px solid #c9c0b0;font-size:12px}
 .locationLink span{font-size:23px}
 
-/* СОЦИАЛНИ МРЕЖИ */
 .socialStrip{display:block;padding-top:40px;margin-top:45px;border-top:1px solid #ddd}
 .socialStrip>div:first-child{margin-bottom:25px}
 .socialStrip .eyebrow{margin-bottom:10px!important}
@@ -2696,7 +2630,6 @@ body{margin:0}
 .socialLinks>a:hover .socialButtonIcon,.socialLinks>a:hover .socialButtonText small,.socialLinks>a:hover .socialButtonArrow{color:#151515}
 .socialLinks>a:hover .socialButtonIcon{border-color:#15151550}
 
-/* ФИНАЛ */
 .closing{position:relative;padding:100px 6%;background:#151515;color:#fff;text-align:center;overflow:hidden}
 .closingOutline{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);font-size:22vw;letter-spacing:-1vw;font-weight:900;color:transparent;-webkit-text-stroke:1px #ffffff15;pointer-events:none}
 .closing>div{position:relative}
@@ -2709,7 +2642,6 @@ body{margin:0}
 .footer p,.footer>span{font-size:11px;color:#777}
 .backTop{width:42px;height:42px;border:1px solid #ccc;display:grid;place-items:center;font-size:22px}
 
-/* ПРОЗОРЦИ */
 .saDialog{width:min(800px,calc(100vw - 28px));max-width:none;max-height:92dvh;padding:0;border:1px solid #d0c3ac;margin:auto;background:#faf9f6;color:#151515;overflow:auto}
 .saDialog::backdrop{background:#000d;backdrop-filter:blur(7px)}
 .saDialog[open]{animation:enter .25s ease}
@@ -2755,10 +2687,15 @@ body{margin:0}
 .viewerNext{right:15px}
 .viewerCaption{display:flex;justify-content:space-between;gap:20px;padding:20px 25px;font-size:12px;line-height:1.7;background:#111;color:#ddd}
 
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-@keyframes enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(6px)}
+}
+@keyframes enter{
+from{opacity:0;transform:translateY(12px)}
+to{opacity:1;transform:translateY(0)}
+}
 
-/* ТАБЛЕТ */
 @media(max-width:1100px){
 .navigation{gap:15px}
 .heroCopy{padding-left:10%;padding-right:8%}
@@ -2819,7 +2756,6 @@ body{margin:0}
 .contactSection .sectionHeading{align-items:flex-start;flex-direction:column}
 }
 
-/* ТЕЛЕФОН */
 @media(max-width:760px){
 html{scroll-padding-top:88px}
 .section{padding:65px 6%}
