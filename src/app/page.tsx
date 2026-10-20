@@ -713,6 +713,7 @@ function GuestSection() {
     </section>
   );
 }
+
 function ReviewsSection() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1598,6 +1599,7 @@ function BookingForm({
     </section>
   );
 }
+
 export default function Home() {
   const [content, setContent] = useState<Content | null>(null);
   const [contentError, setContentError] = useState(false);
@@ -1838,6 +1840,63 @@ function AcademyHome() {
         </div>
       </section>
 
+      <section
+        id="academy-video"
+        className="promoVideoSection"
+        aria-labelledby="promo-video-title"
+      >
+        <div className="promoVideoHeading">
+          <p className="eyebrow">
+            SARANDEV ACADEMY / ТВОЯТА СЛЕДВАЩА СТЪПКА
+          </p>
+          <span className="promoVideoLabel">ХАСКОВО · ПЛОВДИВ</span>
+        </div>
+
+        <div className="promoVideoGrid">
+          <div className="promoVideoFrame">
+           <video
+  className="promoVideoPlayer"
+  autoPlay
+  muted
+  loop
+  controls
+  playsInline
+  preload="metadata"
+  aria-label="Рекламно видео за предстоящите обучения на Sarandev Academy"
+>
+              <source src="/videos/academy-promo.mp4" type="video/mp4" />
+              Браузърът ти не поддържа видео.
+              <a href="/videos/academy-promo.mp4">Отвори видеото</a>.
+            </video>
+          </div>
+
+          <div className="promoVideoCopy">
+            <h2 id="promo-video-title">
+              Твоята кариера<br />
+              в красотата<br />
+              <em>започва тук.</em>
+            </h2>
+            <p className="promoVideoDescription">
+              Практически обучения по маникюр и миглопластика в Хасково и Пловдив.
+              Виж видеото и открий своята следваща стъпка.
+            </p>
+            <div className="promoVideoOffer">
+              <strong>−5%</strong>
+              <p>
+                отстъпка за обучение<br />
+                <span>при записване през сайта</span>
+              </p>
+            </div>
+            <a href="#upcoming" className="button goldButton promoVideoCta">
+              Виж предстоящите курсове <span aria-hidden="true">↗</span>
+            </a>
+            <p className="promoVideoHint">
+              Актуалните дати и свободни места са в графика по-долу.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <div className="valuesBar">
         <span>ОБУЧЕНИЯ</span><span>ПРАКТИКА</span>
         <span>КРАСОТА</span><span>УВЕРЕНОСТ</span>
@@ -2060,6 +2119,7 @@ function AcademyHome() {
       </section>
 
       <ReviewsSection />
+
       <BookingForm
         scheduled={scheduled}
         selectionKey={selectionKey}
@@ -2304,6 +2364,7 @@ function AcademyHome() {
     </main>
   );
 }
+
 const styles = `
 .upcomingSection{background:#eeece6}
 .scheduleCities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
@@ -2904,5 +2965,36 @@ html{scroll-padding-top:88px}
 html{scroll-behavior:auto}
 .academy *,.academy *::before,.academy *::after{animation:none!important;transition:none!important}
 .button:hover,.serviceTile:hover,.galleryCard:hover>img,.serviceTile:hover .servicePhoto img,.socialLinks>a:hover{transform:none}
+}
+
+.promoVideoSection{padding:64px 6% 72px;background:#111;color:#faf9f6;border-top:1px solid #c7a66d40;border-bottom:1px solid #c7a66d40}
+.promoVideoHeading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:30px}
+.promoVideoHeading .eyebrow{color:#d6b47a;line-height:1.8}
+.promoVideoLabel{font-size:10px;letter-spacing:2px;color:#b9b4ab;white-space:nowrap}
+.promoVideoGrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);align-items:center;gap:clamp(28px,4vw,64px)}
+.promoVideoFrame{min-width:0;border:1px solid #c7a66d;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 20px 60px #0005}
+.promoVideoPlayer{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#000}
+.promoVideoCopy{min-width:0}
+.promoVideoCopy h2{font-size:clamp(32px,3.3vw,51px);letter-spacing:-1.5px;line-height:1.12}
+.promoVideoCopy h2 em{color:#d6b47a}
+.promoVideoDescription{font-size:14px;line-height:1.85;color:#c4c0b9;margin-top:23px!important;max-width:430px}
+.promoVideoOffer{display:flex;align-items:center;gap:18px;margin:26px 0;padding:20px 0;border-top:1px solid #ffffff20;border-bottom:1px solid #ffffff20}
+.promoVideoOffer strong{font-size:56px;font-weight:500;line-height:1;color:#d6b47a;letter-spacing:-3px}
+.promoVideoOffer p{font-size:15px;line-height:1.6}
+.promoVideoOffer p span{font-size:12px;color:#b9b4ab}
+.promoVideoCta{max-width:100%;white-space:normal;line-height:1.5}
+.promoVideoHint{margin-top:16px!important;font-size:11px;line-height:1.7;color:#a7a39b;max-width:410px}
+@media(max-width:1000px){
+.promoVideoGrid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px}
+.promoVideoCopy h2{font-size:33px}
+.promoVideoCta{padding:17px;gap:14px;font-size:11px}
+}
+@media(max-width:760px){
+.promoVideoSection{padding:38px 6% 45px}
+.promoVideoHeading{align-items:flex-start;flex-direction:column;gap:10px;margin-bottom:22px}
+.promoVideoGrid{grid-template-columns:1fr;gap:30px}
+.promoVideoCopy h2{font-size:clamp(32px,8vw,44px)}
+.promoVideoCta{display:flex;width:100%;justify-content:space-between;padding:19px 22px;font-size:12px}
+.promoVideoDescription{max-width:none}
 }
 `;
