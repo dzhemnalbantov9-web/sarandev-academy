@@ -1,0 +1,71 @@
+.scheduleAdmin {
+  padding-top: 10px;
+}
+
+.scheduleControls {
+  display: grid;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.scheduleControls .rowActions {
+  align-items: center;
+}
+
+.scheduleControls button[aria-pressed="true"] {
+  background: #171717;
+  color: #fff;
+  border-color: #171717;
+}
+
+.scheduleControls select {
+  max-width: 400px;
+}
+
+.scheduleForm {
+  padding: 28px;
+  margin: 25px 0;
+  background: white;
+  border: 1px solid #c7ad81;
+}
+
+.scheduleForm h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.scheduleForm fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.scheduleForm .editorFields {
+  margin-top: 22px;
+}
+
+.scheduleAdmin .recordTop h2 {
+  font-size: 20px;
+}
+
+.scheduleForm input,
+.scheduleForm select,
+.scheduleForm textarea {
+  font-size: 15px;
+}
+
+@media (max-width: 650px) {
+  .scheduleForm {
+    padding: 20px;
+  }
+
+  .scheduleControls .rowActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .scheduleControls select {
+    max-width: none;
+  }
+}

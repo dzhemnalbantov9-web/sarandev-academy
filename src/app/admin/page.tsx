@@ -10,6 +10,7 @@ import type {
   Service,
   TeamMember,
 } from "../../lib/academy-types";
+import ScheduleAdmin from "../../components/ScheduleAdmin";
 import "./admin.css";
 
 type Booking = {
@@ -25,6 +26,7 @@ type Booking = {
   note: string | null;
   admin_status: string;
   created_at: string;
+  scheduled_course_id?: string | null;
   original_price: number | null;
   discount_percent: number | null;
   final_price: number | null;
@@ -39,10 +41,17 @@ type Review = {
   created_at: string;
 };
 
-type Tab = "bookings" | "courses" | "services" | "team" | "reviews";
+type Tab =
+  | "bookings"
+  | "schedule"
+  | "courses"
+  | "services"
+  | "team"
+  | "reviews";
 
 const tabLabels: Record<Tab, string> = {
   bookings: "Записвания",
+  schedule: "Предстоящи курсове",
   courses: "Курсове",
   services: "Услуги",
   team: "Екип",
@@ -198,7 +207,8 @@ export default function Admin() {
     async function start() {
       try {
         const db = adminClient();
-        const { data, error: authError } = await db.auth.getUser();
+        const { data, error: authError } =
+          await db.auth.getUser();
 
         if (!active) return;
 
@@ -213,7 +223,9 @@ export default function Admin() {
         if (roleError || !allowed) {
           await db.auth.signOut();
           setAccess("login");
-          setError("Този профил няма администраторски достъп.");
+          setError(
+            "Този профил няма администраторски достъп."
+          );
           return;
         }
 
@@ -223,7 +235,9 @@ export default function Admin() {
       } catch (e) {
         if (active) {
           setError(
-            e instanceof Error ? e.message : "Грешка при зареждане."
+            e instanceof Error
+              ? e.message
+              : "Грешка при зареждане."
           );
           setAccess("login");
         }
@@ -267,7 +281,9 @@ export default function Admin() {
 
     window.addEventListener("beforeunload", warn);
 
-    return () => window.removeEventListener("beforeunload", warn);
+    return () => {
+      window.removeEventListener("beforeunload", warn);
+    };
   }, [dirty]);
 
   async function action(work: () => Promise<void>) {
@@ -372,7 +388,9 @@ export default function Admin() {
             s.items.some((item) => !item.trim()) ||
             new Set(s.items).size !== s.items.length ||
             Object.values(s.itemPrices).some(
-              (p) => p !== null && (!Number.isFinite(p) || p < 0)
+              (p) =>
+                p !== null &&
+                (!Number.isFinite(p) || p < 0)
             )
         )
       ) {
@@ -418,7 +436,10 @@ export default function Admin() {
     });
   }
 
-  async function bookingStatus(row: Booking, next: string) {
+  async function bookingStatus(
+    row: Booking,
+    next: string
+  ) {
     await action(async () => {
       const { data, error: dbError } = await adminClient()
         .from("bookings")
@@ -428,12 +449,18 @@ export default function Admin() {
         .single();
 
       if (dbError || !data) {
-        throw new Error("Статусът не беше променен.");
+        throw new Error(
+          dbError?.code === "P0001"
+            ? dbError.message
+            : "Статусът не беше променен."
+        );
       }
 
       setBookings((b) =>
         b.map((x) =>
-          x.id === row.id ? { ...x, admin_status: next } : x
+          x.id === row.id
+            ? { ...x, admin_status: next }
+            : x
         )
       );
 
@@ -441,10 +468,15 @@ export default function Admin() {
     });
   }
 
-  async function reviewUpdate(row: Review, remove = false) {
+  async function reviewUpdate(
+    row: Review,
+    remove = false
+  ) {
     if (
       remove &&
-      !window.confirm("Да изтрия ли този отзив окончателно?")
+      !window.confirm(
+        "Да изтрия ли този отзив окончателно?"
+      )
     ) {
       return;
     }
@@ -546,7 +578,10 @@ export default function Admin() {
 
     if (to < 0 || to >= list.length) return;
 
-    [list[selected], list[to]] = [list[to], list[selected]];
+    [list[selected], list[to]] = [
+      list[to],
+      list[selected],
+    ];
 
     edit(next);
     setSelected(to);
@@ -599,7 +634,10 @@ export default function Admin() {
 
   const filtered = bookings.filter(
     (b) =>
-      (status === "all" || (b.admin_status || "new") === status) &&
+      (
+        status === "all" ||
+        (b.admin_status || "new") === status
+      ) &&
       (!date || b.preferred_date === date) &&
       (city === "all" || b.salon === city) &&
       [b.customer_name, b.phone, b.email, b.offering]
@@ -703,7 +741,8 @@ export default function Admin() {
               <strong>
                 {
                   bookings.filter(
-                    (x) => (x.admin_status || "new") === "new"
+                    (x) =>
+                      (x.admin_status || "new") === "new"
                   ).length
                 }
               </strong>
@@ -711,7 +750,9 @@ export default function Admin() {
             </article>
 
             <article>
-              <strong>{content?.courses.length ?? 0}</strong>
+              <strong>
+                {content?.courses.length ?? 0}
+              </strong>
               <span>Курсове</span>
             </article>
 
@@ -772,7 +813,9 @@ export default function Admin() {
                     disabled={busy || !dirty}
                     onClick={() => void save()}
                   >
-                    {busy ? "Запазване…" : "Запази промените"}
+                    {busy
+                      ? "Запазване…"
+                      : "Запази промените"}
                   </button>
                 </>
               )}
@@ -781,9 +824,15 @@ export default function Admin() {
 
           {dirty && (
             <p className="draftNotice">
-              Има незапазени промени. Натисни „Запази промените“,
-              за да ги публикуваш.
+              Има незапазени промени. Натисни
+              „Запази промените“, за да ги публикуваш.
             </p>
+          )}
+
+          {content && (
+            <div hidden={tab !== "schedule"}>
+              <ScheduleAdmin courses={content.courses} />
+            </div>
           )}
 
           {tab === "bookings" && (
@@ -793,15 +842,21 @@ export default function Admin() {
                   aria-label="Търсене"
                   placeholder="Име, телефон, курс…"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) =>
+                    setQuery(e.target.value)
+                  }
                 />
 
                 <select
                   aria-label="Статус"
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+                  onChange={(e) =>
+                    setStatus(e.target.value)
+                  }
                 >
-                  <option value="all">Всички статуси</option>
+                  <option value="all">
+                    Всички статуси
+                  </option>
                   {Object.entries(statuses).map(([v, l]) => (
                     <option value={v} key={v}>
                       {l}
@@ -812,9 +867,13 @@ export default function Admin() {
                 <select
                   aria-label="Град"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) =>
+                    setCity(e.target.value)
+                  }
                 >
-                  <option value="all">Всички градове</option>
+                  <option value="all">
+                    Всички градове
+                  </option>
                   <option value="haskovo">Хасково</option>
                   <option value="plovdiv">Пловдив</option>
                 </select>
@@ -823,7 +882,9 @@ export default function Admin() {
                   aria-label="Дата"
                   type="date"
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  onChange={(e) =>
+                    setDate(e.target.value)
+                  }
                 />
 
                 <button
@@ -839,13 +900,17 @@ export default function Admin() {
               </div>
 
               <p>
-                Показани {filtered.length} от {bookings.length}{" "}
-                заредени заявки. Зареждат се последните 1000.
+                Показани {filtered.length} от{" "}
+                {bookings.length} заредени заявки.
+                Зареждат се последните 1000.
               </p>
 
               <div className="recordGrid">
                 {filtered.map((b) => (
-                  <article className="recordCard" key={b.id}>
+                  <article
+                    className="recordCard"
+                    key={b.id}
+                  >
                     <div className="recordTop">
                       <h2>{b.customer_name}</h2>
                       <span>
@@ -861,8 +926,18 @@ export default function Admin() {
                       <strong>{b.offering}</strong>
                     </p>
 
+                    {b.scheduled_course_id && (
+                      <p>
+                        <small>
+                          Заявка за обявена дата от графика
+                        </small>
+                      </p>
+                    )}
+
                     <p>
-                      {b.preferred_date} · {b.preferred_time}
+                      {b.preferred_date}
+                      {" · "}
+                      {b.preferred_time}
                     </p>
 
                     <p>
@@ -889,8 +964,10 @@ export default function Admin() {
                       <p className="priceSummary">
                         {b.discount_percent ? (
                           <>
-                            Цена: {euro(Number(b.original_price))}
-                            {" · "}−{b.discount_percent}%{" · "}
+                            Цена:{" "}
+                            {euro(Number(b.original_price))}
+                            {" · "}−{b.discount_percent}%
+                            {" · "}
                           </>
                         ) : null}
 
@@ -911,7 +988,10 @@ export default function Admin() {
                         value={b.admin_status || "new"}
                         disabled={busy}
                         onChange={(e) =>
-                          void bookingStatus(b, e.target.value)
+                          void bookingStatus(
+                            b,
+                            e.target.value
+                          )
                         }
                       >
                         {Object.entries(statuses).map(
@@ -943,17 +1023,21 @@ export default function Admin() {
                     setReviewFilter(e.target.value)
                   }
                 >
-                  <option value="all">Всички отзиви</option>
+                  <option value="all">
+                    Всички отзиви
+                  </option>
                   <option value="pending">
                     Чакащи одобрение
                   </option>
-                  <option value="approved">Публикувани</option>
+                  <option value="approved">
+                    Публикувани
+                  </option>
                 </select>
               </div>
 
               <p>
-                Заредени са последните {reviews.length} отзива
-                (до 1000).
+                Заредени са последните {reviews.length}{" "}
+                отзива (до 1000).
               </p>
 
               <div className="recordGrid">
@@ -961,12 +1045,17 @@ export default function Admin() {
                   .filter(
                     (r) =>
                       reviewFilter === "all" ||
-                      (reviewFilter === "approved"
-                        ? r.approved
-                        : !r.approved)
+                      (
+                        reviewFilter === "approved"
+                          ? r.approved
+                          : !r.approved
+                      )
                   )
                   .map((r) => (
-                    <article className="recordCard" key={r.id}>
+                    <article
+                      className="recordCard"
+                      key={r.id}
+                    >
                       <div className="recordTop">
                         <h2>{r.customer_name}</h2>
                         <span>{r.rating}/5</span>
@@ -978,12 +1067,16 @@ export default function Admin() {
                           : "Чака одобрение"}
                       </small>
 
-                      <p className="prewrap">{r.comment}</p>
+                      <p className="prewrap">
+                        {r.comment}
+                      </p>
 
                       <div className="rowActions">
                         <button
                           disabled={busy}
-                          onClick={() => void reviewUpdate(r)}
+                          onClick={() =>
+                            void reviewUpdate(r)
+                          }
                         >
                           {r.approved
                             ? "Скрий"
@@ -1010,27 +1103,30 @@ export default function Admin() {
             ["courses", "services", "team"].includes(tab) && (
               <div className="editorLayout">
                 <aside className="itemList">
-                  {(tab === "courses"
-                    ? content.courses.map((c) => [
-                        c.id,
-                        `${c.title} ${c.subtitle}`,
-                      ])
-                    : tab === "services"
-                      ? content.services.map((s) => [
-                          s.id,
-                          s.title,
+                  {(
+                    tab === "courses"
+                      ? content.courses.map((c) => [
+                          c.id,
+                          `${c.title} ${c.subtitle}`,
                         ])
-                      : content.team.map((m, i) => [
-                          String(i),
-                          m.name,
-                        ])
+                      : tab === "services"
+                        ? content.services.map((s) => [
+                            s.id,
+                            s.title,
+                          ])
+                        : content.team.map((m, i) => [
+                            String(i),
+                            m.name,
+                          ])
                   ).map(([id, title], i) => (
                     <button
                       key={id}
                       aria-pressed={selected === i}
                       onClick={() => setSelected(i)}
                     >
-                      {String(i + 1).padStart(2, "0")} / {title}
+                      {String(i + 1).padStart(2, "0")}
+                      {" / "}
+                      {title}
                     </button>
                   ))}
                 </aside>
@@ -1039,18 +1135,24 @@ export default function Admin() {
                   <fieldset disabled={busy}>
                     {selected < 0 ? (
                       <p>
-                        Избери запис от списъка или натисни
-                        „Добави“.
+                        Избери запис от списъка или
+                        натисни „Добави“.
                       </p>
                     ) : (
                       <>
                         <div className="rowActions">
-                          <button onClick={() => move(-1)}>
+                          <button
+                            onClick={() => move(-1)}
+                          >
                             ↑ Нагоре
                           </button>
-                          <button onClick={() => move(1)}>
+
+                          <button
+                            onClick={() => move(1)}
+                          >
                             ↓ Надолу
                           </button>
+
                           <button
                             className="danger"
                             onClick={remove}
@@ -1068,6 +1170,7 @@ export default function Admin() {
                                 courseField("title", v)
                               }
                             />
+
                             <Field
                               label="Втори ред на заглавието"
                               value={course.subtitle}
@@ -1075,6 +1178,7 @@ export default function Admin() {
                                 courseField("subtitle", v)
                               }
                             />
+
                             <Field
                               label="Етикет"
                               value={course.label}
@@ -1082,6 +1186,7 @@ export default function Admin() {
                                 courseField("label", v)
                               }
                             />
+
                             <Field
                               label="Продължителност / информация"
                               value={course.meta}
@@ -1089,6 +1194,7 @@ export default function Admin() {
                                 courseField("meta", v)
                               }
                             />
+
                             <Field
                               label="Преподавател"
                               value={course.instructor}
@@ -1096,6 +1202,7 @@ export default function Admin() {
                                 courseField("instructor", v)
                               }
                             />
+
                             <Field
                               label="Снимка — път или HTTPS адрес"
                               value={course.image}
@@ -1103,6 +1210,7 @@ export default function Admin() {
                                 courseField("image", v)
                               }
                             />
+
                             <Field
                               label="Описание на снимката"
                               value={course.imageAlt}
@@ -1110,24 +1218,32 @@ export default function Admin() {
                                 courseField("imageAlt", v)
                               }
                             />
+
                             <Field
                               label="Тагове — разделени със запетая"
                               value={course.tags.join(", ")}
                               onChange={(v) =>
                                 courseField(
                                   "tags",
-                                  v.split(",").map((x) => x.trim())
+                                  v
+                                    .split(",")
+                                    .map((x) => x.trim())
                                 )
                               }
                             />
+
                             <Field
                               label="Кратко описание"
                               value={course.description}
                               multiline
                               onChange={(v) =>
-                                courseField("description", v)
+                                courseField(
+                                  "description",
+                                  v
+                                )
                               }
                             />
+
                             <Field
                               label="Програма — по един абзац на ред"
                               value={course.program}
@@ -1140,85 +1256,89 @@ export default function Admin() {
                             <div className="wide">
                               <h3>Цени в евро</h3>
                               <p>
-                                Отстъпката от 5% се изчислява
-                                автоматично за записвания през
-                                сайта.
+                                Отстъпката от 5% се
+                                изчислява автоматично за
+                                записвания през сайта.
                               </p>
 
-                              {course.variants.map((v, i) => (
-                                <div
-                                  className="variantRow"
-                                  key={i}
-                                >
-                                  <input
-                                    aria-label="Вариант / продължителност"
-                                    value={v.label}
-                                    onChange={(e) =>
-                                      courseField(
-                                        "variants",
-                                        course.variants.map(
-                                          (x, j) =>
-                                            j === i
-                                              ? {
-                                                  ...x,
-                                                  label:
-                                                    e.target
-                                                      .value,
-                                                }
-                                              : x
-                                        )
-                                      )
-                                    }
-                                  />
-
-                                  <input
-                                    aria-label="Цена в евро"
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={v.price}
-                                    onChange={(e) =>
-                                      courseField(
-                                        "variants",
-                                        course.variants.map(
-                                          (x, j) =>
-                                            j === i
-                                              ? {
-                                                  ...x,
-                                                  price:
-                                                    e.target
-                                                      .value ===
-                                                    ""
-                                                      ? 0
-                                                      : Number(
-                                                          e
-                                                            .target
-                                                            .value
-                                                        ),
-                                                }
-                                              : x
-                                        )
-                                      )
-                                    }
-                                  />
-
-                                  <button
-                                    disabled={
-                                      course.variants.length === 1
-                                    }
-                                    onClick={() =>
-                                      courseField(
-                                        "variants",
-                                        course.variants.filter(
-                                          (_, j) => i !== j
-                                        )
-                                      )
-                                    }
+                              {course.variants.map(
+                                (v, i) => (
+                                  <div
+                                    className="variantRow"
+                                    key={i}
                                   >
-                                    Премахни
-                                  </button>
-                                </div>
-                              ))}
+                                    <input
+                                      aria-label="Вариант / продължителност"
+                                      value={v.label}
+                                      onChange={(e) =>
+                                        courseField(
+                                          "variants",
+                                          course.variants.map(
+                                            (x, j) =>
+                                              j === i
+                                                ? {
+                                                    ...x,
+                                                    label:
+                                                      e.target
+                                                        .value,
+                                                  }
+                                                : x
+                                          )
+                                        )
+                                      }
+                                    />
+
+                                    <input
+                                      aria-label="Цена в евро"
+                                      type="number"
+                                      min="0"
+                                      step="0.01"
+                                      value={v.price}
+                                      onChange={(e) =>
+                                        courseField(
+                                          "variants",
+                                          course.variants.map(
+                                            (x, j) =>
+                                              j === i
+                                                ? {
+                                                    ...x,
+                                                    price:
+                                                      e.target
+                                                        .value ===
+                                                      ""
+                                                        ? 0
+                                                        : Number(
+                                                            e
+                                                              .target
+                                                              .value
+                                                          ),
+                                                  }
+                                                : x
+                                          )
+                                        )
+                                      }
+                                    />
+
+                                    <button
+                                      disabled={
+                                        course.variants
+                                          .length === 1
+                                      }
+                                      onClick={() =>
+                                        courseField(
+                                          "variants",
+                                          course.variants.filter(
+                                            (_, j) =>
+                                              i !== j
+                                          )
+                                        )
+                                      }
+                                    >
+                                      Премахни
+                                    </button>
+                                  </div>
+                                )
+                              )}
 
                               <button
                                 onClick={() =>
@@ -1246,13 +1366,18 @@ export default function Admin() {
                                 serviceField("title", v)
                               }
                             />
+
                             <Field
                               label="Роля на специалист — част от наименованието"
                               value={service.specialistRole}
                               onChange={(v) =>
-                                serviceField("specialistRole", v)
+                                serviceField(
+                                  "specialistRole",
+                                  v
+                                )
                               }
                             />
+
                             <Field
                               label="Снимка — път или HTTPS адрес"
                               value={service.image}
@@ -1260,6 +1385,7 @@ export default function Admin() {
                                 serviceField("image", v)
                               }
                             />
+
                             <Field
                               label="Описание на снимката"
                               value={service.alt}
@@ -1267,14 +1393,19 @@ export default function Admin() {
                                 serviceField("alt", v)
                               }
                             />
+
                             <Field
                               label="Описание"
                               value={service.description}
                               multiline
                               onChange={(v) =>
-                                serviceField("description", v)
+                                serviceField(
+                                  "description",
+                                  v
+                                )
                               }
                             />
+
                             <Field
                               label="Процедури — по една на ред"
                               value={service.items.join("\n")}
@@ -1288,39 +1419,51 @@ export default function Admin() {
                             />
 
                             <div className="wide">
-                              <h3>Цени на процедурите в евро</h3>
+                              <h3>
+                                Цени на процедурите в евро
+                              </h3>
                               <p>
-                                Остави празно за цена по запитване.
+                                Остави празно за цена
+                                по запитване.
                               </p>
 
-                              {service.items.map((item, i) => (
-                                <label key={i}>
-                                  <span>
-                                    {item || "Процедура"}
-                                  </span>
+                              {service.items.map(
+                                (item, i) => (
+                                  <label key={i}>
+                                    <span>
+                                      {item || "Процедура"}
+                                    </span>
 
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={
-                                      service.itemPrices[item] ??
-                                      ""
-                                    }
-                                    onChange={(e) =>
-                                      serviceField("itemPrices", {
-                                        ...service.itemPrices,
-                                        [item]:
-                                          e.target.value === ""
-                                            ? null
-                                            : Number(
-                                                e.target.value
-                                              ),
-                                      })
-                                    }
-                                  />
-                                </label>
-                              ))}
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="0.01"
+                                      value={
+                                        service.itemPrices[
+                                          item
+                                        ] ?? ""
+                                      }
+                                      onChange={(e) =>
+                                        serviceField(
+                                          "itemPrices",
+                                          {
+                                            ...service.itemPrices,
+                                            [item]:
+                                              e.target
+                                                .value ===
+                                              ""
+                                                ? null
+                                                : Number(
+                                                    e.target
+                                                      .value
+                                                  ),
+                                          }
+                                        )
+                                      }
+                                    />
+                                  </label>
+                                )
+                              )}
                             </div>
                           </div>
                         )}
@@ -1334,6 +1477,7 @@ export default function Admin() {
                                 memberField("name", v)
                               }
                             />
+
                             <Field
                               label="Роля — напр. Козметик и масажист"
                               value={member.role}
@@ -1358,7 +1502,9 @@ export default function Admin() {
                                   "Пловдив",
                                   "Хасково и Пловдив",
                                 ].map((c) => (
-                                  <option key={c}>{c}</option>
+                                  <option key={c}>
+                                    {c}
+                                  </option>
                                 ))}
                               </select>
                             </label>
@@ -1370,6 +1516,7 @@ export default function Admin() {
                                 memberField("phone", v)
                               }
                             />
+
                             <Field
                               label="Номер за директно обаждане"
                               value={member.tel}
@@ -1377,6 +1524,7 @@ export default function Admin() {
                                 memberField("tel", v)
                               }
                             />
+
                             <Field
                               label="Снимка — път или HTTPS адрес"
                               value={member.image}
@@ -1384,12 +1532,18 @@ export default function Admin() {
                                 memberField("image", v)
                               }
                             />
+
                             <Field
                               label="Описание"
-                              value={member.description ?? ""}
+                              value={
+                                member.description ?? ""
+                              }
                               multiline
                               onChange={(v) =>
-                                memberField("description", v)
+                                memberField(
+                                  "description",
+                                  v
+                                )
                               }
                             />
                           </div>

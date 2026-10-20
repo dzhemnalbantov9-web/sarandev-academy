@@ -265,20 +265,12 @@ function SocialIcon({
     return (
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect
-          x="3"
-          y="3"
-          width="18"
-          height="18"
-          rx="5"
-          stroke="currentColor"
-          strokeWidth="1.7"
+          x="3" y="3" width="18" height="18" rx="5"
+          stroke="currentColor" strokeWidth="1.7"
         />
         <circle
-          cx="12"
-          cy="12"
-          r="4"
-          stroke="currentColor"
-          strokeWidth="1.7"
+          cx="12" cy="12" r="4"
+          stroke="currentColor" strokeWidth="1.7"
         />
         <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
       </svg>
@@ -464,7 +456,6 @@ function PhotoGallery({
   const visible = photos.filter(
     (photo) => category === "Всички" || category === photo.category
   );
-
   const current = active === null ? null : visible[active] ?? null;
 
   function move(direction: number) {
@@ -508,11 +499,7 @@ function PhotoGallery({
             aria-label={`Отвори: ${photo.title}`}
             aria-haspopup="dialog"
           >
-            <Photo
-              src={photo.src}
-              fallbacks={photo.fallbacks}
-              alt={photo.alt}
-            />
+            <Photo src={photo.src} fallbacks={photo.fallbacks} alt={photo.alt} />
             <span className="galleryShade" />
             <span className="galleryNumber">
               {String(index + 1).padStart(2, "0")}
@@ -548,8 +535,7 @@ function PhotoGallery({
               }
             }}
             onTouchStart={(event) => {
-              touchStart.current =
-                event.changedTouches[0]?.clientX ?? null;
+              touchStart.current = event.changedTouches[0]?.clientX ?? null;
             }}
             onTouchEnd={(event) => {
               const start = touchStart.current;
@@ -580,17 +566,13 @@ function PhotoGallery({
                   type="button"
                   onClick={() => move(-1)}
                   aria-label="Предишна снимка"
-                >
-                  ←
-                </button>
+                >←</button>
                 <button
                   className="viewerNext"
                   type="button"
                   onClick={() => move(1)}
                   aria-label="Следваща снимка"
-                >
-                  →
-                </button>
+                >→</button>
               </>
             )}
 
@@ -632,9 +614,7 @@ function TeamSection({ onSofia }: { onSofia: () => void }) {
             key={item}
             aria-pressed={city === item}
             onClick={() => setCity(item)}
-          >
-            {item}
-          </button>
+          >{item}</button>
         ))}
       </div>
 
@@ -649,28 +629,22 @@ function TeamSection({ onSofia }: { onSofia: () => void }) {
               />
               <span className="cityBadge">{member.city}</span>
             </div>
-
             <div className="teamBody">
               <p className="teamRole">{member.role}</p>
               <h3>{member.name}</h3>
-
               {member.description && (
                 <p className="teamDescription">{member.description}</p>
               )}
-
               <a className="teamPhone" href={`tel:${member.tel}`}>
                 {member.phone} <span aria-hidden="true">↗</span>
               </a>
-
               {member.name === "София Сарандева" && (
                 <button
                   type="button"
                   className="textLink"
                   onClick={onSofia}
                   aria-haspopup="dialog"
-                >
-                  Повече за София ↗
-                </button>
+                >Повече за София ↗</button>
               )}
             </div>
           </article>
@@ -682,10 +656,7 @@ function TeamSection({ onSofia }: { onSofia: () => void }) {
 
 function GuestSection() {
   const { services } = useContext(ContentContext);
-  const guestService = services.find(
-    (service) => service.id === "service-3"
-  );
-
+  const guestService = services.find((service) => service.id === "service-3");
   if (!guestService) return null;
 
   return (
@@ -701,36 +672,25 @@ function GuestSection() {
         </div>
 
         <div className="guestCopy">
-          <p className="eyebrow">
-            ГОСТУВА НИ ВСЕКИ МЕСЕЦ ОТ ТУРЦИЯ
-          </p>
+          <p className="eyebrow">ГОСТУВА НИ ВСЕКИ МЕСЕЦ ОТ ТУРЦИЯ</p>
           <h2>Гюнюл Мерт.<br /><em>Естетична корекция.</em></h2>
-
           <p className="guestDescription">
-            Всеки месец Гюнюл Мерт гостува в нашите салони
-            в Хасково и Пловдив.
+            Всеки месец Гюнюл Мерт гостува в нашите салони в Хасково и Пловдив.
           </p>
-
           <div className="guestCities">
             <span>Хасково</span><span>Пловдив</span>
           </div>
-
           <div className="guestServices">
-            {guestService.items.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
+            {guestService.items.map((item) => <span key={item}>{item}</span>)}
           </div>
-
           <div className="productNote">
             <span>ФИЛЪР, С КОЙТО РАБОТИ</span>
             <strong>Elasty</strong>
           </div>
-
           <p className="guestNote">
             Датите на гостуване и свободните часове се уточняват
             предварително при записване.
           </p>
-
           <a href="#booking" className="button goldButton">
             Изпрати запитване <span aria-hidden="true">↗</span>
           </a>
@@ -748,13 +708,11 @@ function GuestSection() {
             Натисни върху снимка, за да я разгледаш.
           </p>
         </div>
-
         <PhotoGallery photos={correctionPhotos} compact />
       </div>
     </section>
   );
 }
-
 function ReviewsSection() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -769,13 +727,12 @@ function ReviewsSection() {
 
     async function loadReviews() {
       try {
-        const { data, error: databaseError } =
-          await getSupabaseClient()
-            .from("reviews")
-            .select("id, customer_name, rating, comment")
-            .eq("approved", true)
-            .order("created_at", { ascending: false })
-            .limit(12);
+        const { data, error: databaseError } = await getSupabaseClient()
+          .from("reviews")
+          .select("id, customer_name, rating, comment")
+          .eq("approved", true)
+          .order("created_at", { ascending: false })
+          .limit(12);
 
         if (databaseError) throw databaseError;
 
@@ -791,25 +748,19 @@ function ReviewsSection() {
 
         if (active) setReviews(valid);
       } catch {
-        if (active) {
-          setLoadError("Отзивите временно не могат да се заредят.");
-        }
+        if (active) setLoadError("Отзивите временно не могат да се заредят.");
       } finally {
         if (active) setLoading(false);
       }
     }
 
     void loadReviews();
-
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   async function submitReview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitLock.current) return;
-
     setError("");
     setSuccess("");
 
@@ -823,12 +774,10 @@ function ReviewsSection() {
       setError("Въведи име между 2 и 100 символа.");
       return;
     }
-
     if (comment.length < 10 || comment.length > 1500) {
       setError("Отзивът трябва да съдържа между 10 и 1500 символа.");
       return;
     }
-
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       setError("Избери оценка от 1 до 5.");
       return;
@@ -840,18 +789,11 @@ function ReviewsSection() {
     try {
       const { error: databaseError } = await getSupabaseClient()
         .from("reviews")
-        .insert({
-          customer_name: customerName,
-          rating,
-          comment,
-        });
+        .insert({ customer_name: customerName, rating, comment });
 
       if (databaseError) throw databaseError;
-
       form.reset();
-      setSuccess(
-        "Благодарим ти! Отзивът е изпратен и ще се покаже след одобрение."
-      );
+      setSuccess("Благодарим ти! Отзивът е изпратен и ще се покаже след одобрение.");
     } catch {
       setError("Отзивът не беше изпратен. Опитай отново по-късно.");
     } finally {
@@ -868,14 +810,12 @@ function ReviewsSection() {
           <h2>Вашите думи.<br /><em>Нашето вдъхновение.</em></h2>
         </div>
         <p className="sectionIntro">
-          Посещавала си наш салон или обучение?
-          Сподели своето впечатление.
+          Посещавала си наш салон или обучение? Сподели своето впечатление.
         </p>
       </div>
 
       {loading && <p role="status">Зареждане на отзивите…</p>}
       {loadError && <p role="status">{loadError}</p>}
-
       {!loading && !loadError && reviews.length === 0 && (
         <p className="reviewsNotice">
           Все още няма публикувани отзиви.
@@ -887,9 +827,7 @@ function ReviewsSection() {
         <div className="reviewsGrid">
           {reviews.map((review) => (
             <article className="reviewCard" key={review.id}>
-              <p className="reviewRating">
-                Оценка {review.rating} от 5
-              </p>
+              <p className="reviewRating">Оценка {review.rating} от 5</p>
               <p className="reviewText">{review.comment}</p>
               <h3>{review.customer_name}</h3>
             </article>
@@ -901,20 +839,13 @@ function ReviewsSection() {
         <div className="formAside">
           <p className="eyebrow">ОСТАВИ ОТЗИВ</p>
           <h3>Твоето мнение<br /><em>има значение.</em></h3>
-          <p>
-            Името, оценката и коментарът ще бъдат публични
-            след одобрение.
-          </p>
-          <p>
-            Не включвай телефон, имейл или други лични данни
-            в коментара.
-          </p>
+          <p>Името, оценката и коментарът ще бъдат публични след одобрение.</p>
+          <p>Не включвай телефон, имейл или други лични данни в коментара.</p>
         </div>
 
         <form className="saForm" onSubmit={submitReview}>
           <fieldset disabled={submitting}>
             <legend>ТВОЯТ ОТЗИВ</legend>
-
             <div className="formFields">
               <label>
                 <span>Име *</span>
@@ -927,7 +858,6 @@ function ReviewsSection() {
                   required
                 />
               </label>
-
               <label>
                 <span>Оценка *</span>
                 <select name="rating" defaultValue="" required>
@@ -939,7 +869,6 @@ function ReviewsSection() {
                   <option value="1">1 от 5</option>
                 </select>
               </label>
-
               <label className="fullWidth">
                 <span>Твоят отзив *</span>
                 <textarea
@@ -952,27 +881,13 @@ function ReviewsSection() {
                 />
               </label>
             </div>
-
-            <p className="formPrivacy">
-              Отзивите се публикуват след преглед и одобрение.
-            </p>
-
+            <p className="formPrivacy">Отзивите се публикуват след преглед и одобрение.</p>
             <button className="formSubmit" type="submit">
-              {submitting ? "Изпращане…" : "Изпрати отзив"}
-              <span>↗</span>
+              {submitting ? "Изпращане…" : "Изпрати отзив"}<span>↗</span>
             </button>
           </fieldset>
-
-          {error && (
-            <p className="formMessage errorMessage" role="alert">
-              {error}
-            </p>
-          )}
-          {success && (
-            <p className="formMessage successMessage" role="status">
-              {success}
-            </p>
-          )}
+          {error && <p className="formMessage errorMessage" role="alert">{error}</p>}
+          {success && <p className="formMessage successMessage" role="status">{success}</p>}
         </form>
       </div>
     </section>
@@ -983,28 +898,214 @@ function DiscountBanner() {
   return (
     <aside className="discountBanner">
       <span className="discountPercent">−5%</span>
-
       <div>
         <p className="eyebrow">ТВОЕТО ОНЛАЙН ПРЕДИМСТВО</p>
-        <h3>
-          Запиши се през сайта.<br />
-          <em>Започни с 5% отстъпка.</em>
-        </h3>
+        <h3>Запиши се през сайта.<br /><em>Започни с 5% отстъпка.</em></h3>
         <p>
           За всеки курс при записване през сайта. Отстъпката се
           отразява в заявката и важи при потвърдено записване.
         </p>
       </div>
-
-      <a className="button goldButton" href="#booking">
-        Избери обучение ↗
-      </a>
+      <a className="button goldButton" href="#booking">Избери обучение ↗</a>
     </aside>
   );
 }
 
-function BookingForm() {
+type ScheduledCourse = {
+  id: string;
+  course_id: string;
+  variant_index: number;
+  salon: "haskovo" | "plovdiv";
+  start_date: string;
+  start_time: string;
+  capacity: number;
+  status: "open" | "cancelled";
+  note: string | null;
+  version: number;
+  remaining_seats: number;
+};
+
+function isScheduledCourse(value: unknown): value is ScheduledCourse {
+  if (!value || typeof value !== "object") return false;
+  const row = value as Record<string, unknown>;
+
+  return (
+    typeof row.id === "string" &&
+    typeof row.course_id === "string" &&
+    Number.isInteger(row.variant_index) &&
+    Number(row.variant_index) >= 0 &&
+    (row.salon === "haskovo" || row.salon === "plovdiv") &&
+    typeof row.start_date === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(row.start_date) &&
+    typeof row.start_time === "string" &&
+    /^\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(row.start_time) &&
+    (row.status === "open" || row.status === "cancelled") &&
+    Number.isInteger(row.remaining_seats) &&
+    Number(row.remaining_seats) >= 0 &&
+    (row.note === null || typeof row.note === "string")
+  );
+}
+
+async function loadUpcomingCourses(): Promise<ScheduledCourse[]> {
+  const { data, error } = await getSupabaseClient().rpc(
+    "academy_upcoming_courses",
+    { p_admin: false }
+  );
+
+  if (error || !Array.isArray(data)) {
+    throw new Error("Графикът временно не може да се зареди.");
+  }
+
+  return data
+    .filter(isScheduledCourse)
+    .filter((row) => row.status === "open" && row.start_date >= todayInSofia())
+    .sort((a, b) =>
+      (a.start_date + a.start_time).localeCompare(b.start_date + b.start_time)
+    );
+}
+
+function scheduleDate(value: string) {
+  return new Intl.DateTimeFormat("bg-BG", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Europe/Sofia",
+  }).format(new Date(value + "T12:00:00+03:00"));
+}
+
+function UpcomingCourses({
+  rows,
+  loading,
+  error,
+  onRetry,
+  onSelect,
+}: {
+  rows: ScheduledCourse[];
+  loading: boolean;
+  error: string;
+  onRetry: () => void;
+  onSelect: (row: ScheduledCourse) => void;
+}) {
+  const { courses } = useContext(ContentContext);
+
+  return (
+    <section id="upcoming" className="section upcomingSection">
+      <div className="sectionHeading">
+        <div>
+          <p className="eyebrow">ИЗБЕРИ СВОЯТА ДАТА</p>
+          <h2>Предстоящи курсове.<br /><em>Твоето ново начало.</em></h2>
+        </div>
+        <p className="sectionIntro">
+          Обявените дати за Хасково и Пловдив.
+          Избери обучение и изпрати заявка за записване.
+        </p>
+      </div>
+
+      {loading && <p role="status">Зареждане на графика…</p>}
+      {error && (
+        <div className="scheduleNotice" role="status">
+          <p>{error}</p>
+          <button type="button" className="textLink" onClick={onRetry}>
+            Опитай отново ↗
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="scheduleCities">
+          {locations.map((location) => {
+            const visible = rows.filter(
+              (row) =>
+                row.salon === location.id &&
+                courses.some(
+                  (course) =>
+                    course.id === row.course_id &&
+                    course.variants[row.variant_index]
+                )
+            );
+
+            return (
+              <div className="scheduleCity" key={location.id}>
+                <p className="eyebrow">SARANDEV ACADEMY / {location.city}</p>
+                <h3>Предстоящи курсове — {location.city}</h3>
+
+                {!visible.length && (
+                  <div className="scheduleNotice">
+                    <p>Скоро ще обявим нови дати за {location.city}.</p>
+                    <a className="textLink" href="#booking">Изпрати запитване ↗</a>
+                  </div>
+                )}
+
+                {visible.map((row) => {
+                  const course = courses.find((item) => item.id === row.course_id)!;
+                  const variant = course.variants[row.variant_index];
+                  const full = row.remaining_seats === 0;
+
+                  return (
+                    <article className="scheduleCard" key={row.id}>
+                      <p className="scheduleDate">
+                        <time dateTime={row.start_date}>{scheduleDate(row.start_date)}</time>
+                        <span> · {row.start_time.slice(0, 5)} ч.</span>
+                      </p>
+                      <h4>{course.title} {course.subtitle}</h4>
+                      <p>{variant.label}</p>
+                      <p>Преподавател: {course.instructor}</p>
+                      <p>{location.address}</p>
+                      {row.note && <p className="scheduleNote">{row.note}</p>}
+
+                      <div className="scheduleCardBottom">
+                        <div>
+                          <p className="schedulePrice">
+                            {euro(discounted(variant.price))}
+                            <small> през сайта (−5%)</small>
+                          </p>
+                          <p className="scheduleStandard">
+                            Стандартна цена: {euro(variant.price)}
+                          </p>
+                          <p className="scheduleSeats" role="status">
+                            {full
+                              ? "Местата са запълнени"
+                              : "Свободни места: " + row.remaining_seats}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="button goldButton"
+                          disabled={full}
+                          onClick={() => onSelect(row)}
+                        >
+                          {full ? "Няма места" : "Запиши се ↗"}
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <p className="scheduleFootnote">
+        Заявката подлежи на потвърждение. Свободните места се проверяват отново при изпращане.
+      </p>
+    </section>
+  );
+}
+
+function BookingForm({
+  scheduled,
+  selectionKey,
+  onClearSchedule,
+  onBooked,
+}: {
+  scheduled: ScheduledCourse | null;
+  selectionKey: number;
+  onClearSchedule: () => void;
+  onBooked: () => void;
+}) {
   const { courses, services, team } = useContext(ContentContext);
+
   const courseOptions = courses.flatMap((c) =>
     c.variants.map((v) => courseOption(c, v))
   );
@@ -1012,39 +1113,48 @@ function BookingForm() {
     s.items.map((item) => serviceOption(s, item))
   );
 
-  const [bookingType, setBookingType] =
-    useState<"service" | "course">("service");
+  const [bookingType, setBookingType] = useState<"service" | "course">("service");
   const [salon, setSalon] = useState("");
   const [offering, setOffering] = useState("");
   const [specialist, setSpecialist] = useState("");
+  const [preferredDate, setPreferredDate] = useState("");
+  const [preferredTime, setPreferredTime] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const submitLock = useRef(false);
 
-  const options =
-    bookingType === "service" ? serviceOptions : courseOptions;
+  useEffect(() => {
+    if (!scheduled) return;
 
-  const city = locations.find(
-    (location) => location.id === salon
-  )?.city;
+    const course = courses.find((item) => item.id === scheduled.course_id);
+    const variant = course?.variants[scheduled.variant_index];
+    if (!course || !variant) return;
+
+    setBookingType("course");
+    setSalon(scheduled.salon);
+    setOffering(courseOption(course, variant));
+    setSpecialist("");
+    setPreferredDate(scheduled.start_date);
+    setPreferredTime(scheduled.start_time.slice(0, 5));
+    setError("");
+    setSuccess("");
+  }, [scheduled, selectionKey, courses]);
+
+  const options = bookingType === "service" ? serviceOptions : courseOptions;
+  const city = locations.find((location) => location.id === salon)?.city;
 
   const selectedGroup = services.find((s) =>
     s.items.some((item) => serviceOption(s, item) === offering)
   );
-
   const selectedCourse = courses.find((c) =>
     c.variants.some((v) => courseOption(c, v) === offering)
   );
-
   const selectedVariantIndex =
     selectedCourse?.variants.findIndex(
       (v) => courseOption(selectedCourse, v) === offering
     ) ?? -1;
-
-  const selectedVariant =
-    selectedCourse?.variants[selectedVariantIndex];
-
+  const selectedVariant = selectedCourse?.variants[selectedVariantIndex];
   const isAesthetic = selectedGroup?.id === "service-3";
 
   const availableSpecialists = team.filter((member) => {
@@ -1058,6 +1168,9 @@ function BookingForm() {
   });
 
   function changeType(type: "service" | "course") {
+    onClearSchedule();
+    setPreferredDate("");
+    setPreferredTime("");
     setBookingType(type);
     setOffering("");
     setSpecialist("");
@@ -1068,59 +1181,49 @@ function BookingForm() {
   async function submitBooking(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitLock.current) return;
-
     setError("");
     setSuccess("");
 
     const form = event.currentTarget;
     const data = new FormData(form);
-
     const customerName = String(data.get("customer_name") ?? "").trim();
     const phone = String(data.get("phone") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
     const note = String(data.get("note") ?? "").trim();
-    const preferredDate = String(data.get("preferred_date") ?? "");
-    const preferredTime = String(data.get("preferred_time") ?? "");
+    const submittedDate = String(data.get("preferred_date") ?? "");
+    const submittedTime = String(data.get("preferred_time") ?? "");
 
     if (!locations.some((location) => location.id === salon)) {
       setError("Избери салон.");
       return;
     }
-
     if (!options.includes(offering)) {
       setError("Избери услуга или обучение.");
       return;
     }
-
     if (customerName.length < 2 || customerName.length > 100) {
       setError("Въведи име между 2 и 100 символа.");
       return;
     }
 
     const phoneDigits = phone.replace(/\D/g, "");
-
     if (phoneDigits.length < 7 || phoneDigits.length > 15) {
       setError("Въведи валиден телефон за връзка.");
       return;
     }
-
-    if (!preferredDate || preferredDate < todayInSofia()) {
+    if (!submittedDate || submittedDate < todayInSofia()) {
       setError("Избери днешна или бъдеща дата.");
       return;
     }
-
-    if (!preferredTime) {
+    if (!submittedTime) {
       setError("Посочи желан час.");
       return;
     }
-
     if (
       bookingType === "service" &&
       !isAesthetic &&
       specialist &&
-      !availableSpecialists.some(
-        (member) => member.name === specialist
-      )
+      !availableSpecialists.some((member) => member.name === specialist)
     ) {
       setError("Избери специалист за избраните град и услуга.");
       return;
@@ -1142,14 +1245,42 @@ function BookingForm() {
     setSubmitting(true);
 
     try {
-      const { error: databaseError } = await getSupabaseClient()
-        .rpc("academy_submit_booking", {
+      if (scheduled) {
+        const latest = await loadUpcomingCourses();
+        const row = latest.find((item) => item.id === scheduled.id);
+
+        if (!row || row.remaining_seats < 1) {
+          onBooked();
+          throw new Error(
+            "За тази дата вече няма свободни места. Избери друга дата от графика."
+          );
+        }
+
+        if (
+          bookingType !== "course" ||
+          row.course_id !== selectedCourse?.id ||
+          row.variant_index !== selectedVariantIndex ||
+          row.salon !== salon ||
+          row.start_date !== submittedDate ||
+          row.start_time.slice(0, 5) !== submittedTime.slice(0, 5)
+        ) {
+          onBooked();
+          throw new Error(
+            "Данните за избрания курс са променени. Избери го отново от актуалния график."
+          );
+        }
+      }
+
+      const { error: databaseError } = await getSupabaseClient().rpc(
+        "academy_submit_booking",
+        {
           p_booking: {
             salon,
             booking_type: bookingType,
             offering,
-            preferred_date: preferredDate,
-            preferred_time: preferredTime,
+            preferred_date: submittedDate,
+            preferred_time: submittedTime,
+            scheduled_course_id: scheduled?.id ?? null,
             customer_name: customerName,
             phone,
             email: email || null,
@@ -1157,18 +1288,23 @@ function BookingForm() {
             course_id: selectedCourse?.id ?? null,
             variant_index: selectedVariantIndex,
           },
-        });
+        }
+      );
 
       if (databaseError) {
         console.error("Booking error code:", databaseError.code);
+        onBooked();
         throw new Error(
           `Заявката не беше изпратена. Опитай отново или се обади на ${academyPhone}.`
         );
       }
 
       const selectedCity = city;
-
       form.reset();
+      setPreferredDate("");
+      setPreferredTime("");
+      onClearSchedule();
+      onBooked();
       setSalon("");
       setOffering("");
       setSpecialist("");
@@ -1180,9 +1316,7 @@ function BookingForm() {
       );
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Възникна грешка. Опитай отново."
+        err instanceof Error ? err.message : "Възникна грешка. Опитай отново."
       );
     } finally {
       submitLock.current = false;
@@ -1194,15 +1328,11 @@ function BookingForm() {
     const group = services.find((s) =>
       s.items.some((item) => serviceOption(s, item) === option)
     );
-
     if (!group) return "";
-
     const item = group.items.find(
       (item) => serviceOption(group, item) === option
     );
-
     if (!item) return "";
-
     const price = group.itemPrices[item];
     return price != null ? ` / ${euro(price)}` : "";
   }
@@ -1215,21 +1345,41 @@ function BookingForm() {
           <h2>Време за теб.<br /><em>Или за ново начало.</em></h2>
         </div>
         <p className="sectionIntro">
-          Избери салон, услуга или обучение и ни изпрати
-          предпочитаните дата и час.
+          Избери салон, услуга или обучение и ни изпрати предпочитаните дата и час.
         </p>
       </div>
 
       <DiscountBanner />
 
+      {scheduled && (
+        <div className="scheduleSelection" role="status">
+          <strong>Избрана дата от графика</strong>
+          <p>
+            {locations.find((item) => item.id === scheduled.salon)?.city}
+            {" · "}{scheduleDate(scheduled.start_date)}
+            {" · "}{scheduled.start_time.slice(0, 5)} ч.
+          </p>
+          <p>Курсът, градът и началният час са попълнени във формата.</p>
+          <button
+            type="button"
+            className="textLink"
+            disabled={submitting}
+            onClick={() => {
+              onClearSchedule();
+              setPreferredDate("");
+              setPreferredTime("");
+              setError("");
+              setSuccess("");
+            }}
+          >Избери друга дата или изпрати общо запитване ↗</button>
+        </div>
+      )}
+
       {bookingType === "course" && selectedVariant && (
         <p className="discountQuote" role="status">
           Стандартна цена: {euro(selectedVariant.price)}
           {" · "}Отстъпка 5%:{" "}
-          {euro(
-            selectedVariant.price -
-            discounted(selectedVariant.price)
-          )}
+          {euro(selectedVariant.price - discounted(selectedVariant.price))}
           {" · "}
           <strong>
             Цена при записване през сайта:{" "}
@@ -1242,29 +1392,20 @@ function BookingForm() {
         <aside className="formAside">
           <p className="eyebrow">ЗАПИСВАНЕ В SARANDEV ACADEMY</p>
           <h3>Ти избираш.<br /><em>Ние потвърждаваме.</em></h3>
-
           <ol>
             <li>Избираш Хасково или Пловдив.</li>
             <li>Посочваш услуга или курс.</li>
             <li>Предлагаш удобни дата и час.</li>
             <li>Свързваме се с теб за потвърждение.</li>
           </ol>
-
           <div className="bookingNotice">
             <strong>Важно за записването</strong>
             <p>
-              Това е заявка за предпочитан час. Записването е
-              валидно след потвърждение.
+              Това е заявка за предпочитан час. Записването е валидно след потвърждение.
             </p>
-            <p>
-              Обученията се провеждат от София Сарандева
-              в Хасково и Пловдив.
-            </p>
+            <p>Обученията се провеждат от София Сарандева в Хасково и Пловдив.</p>
           </div>
-
-          <a className="asidePhone" href={`tel:${academyTel}`}>
-            {academyPhone} ↗
-          </a>
+          <a className="asidePhone" href={`tel:${academyTel}`}>{academyPhone} ↗</a>
         </aside>
 
         <form className="saForm" onSubmit={submitBooking}>
@@ -1276,16 +1417,12 @@ function BookingForm() {
                 type="button"
                 aria-pressed={bookingType === "service"}
                 onClick={() => changeType("service")}
-              >
-                Услуга <span>↗</span>
-              </button>
+              >Услуга <span>↗</span></button>
               <button
                 type="button"
                 aria-pressed={bookingType === "course"}
                 onClick={() => changeType("course")}
-              >
-                Обучение <span>↗</span>
-              </button>
+              >Обучение <span>↗</span></button>
             </div>
 
             <div className="formFields">
@@ -1293,6 +1430,7 @@ function BookingForm() {
                 <span>Салон *</span>
                 <select
                   name="salon"
+                  disabled={scheduled !== null}
                   value={salon}
                   onChange={(event) => {
                     setSalon(event.target.value);
@@ -1310,11 +1448,10 @@ function BookingForm() {
               </label>
 
               <label className="fullWidth">
-                <span>
-                  {bookingType === "service" ? "Услуга *" : "Обучение *"}
-                </span>
+                <span>{bookingType === "service" ? "Услуга *" : "Обучение *"}</span>
                 <select
                   name="offering"
+                  disabled={scheduled !== null}
                   value={offering}
                   onChange={(event) => {
                     setOffering(event.target.value);
@@ -1323,17 +1460,12 @@ function BookingForm() {
                   required
                 >
                   <option value="">
-                    {bookingType === "service"
-                      ? "Избери услуга"
-                      : "Избери обучение"}
+                    {bookingType === "service" ? "Избери услуга" : "Избери обучение"}
                   </option>
-
                   {options.map((option) => (
                     <option key={option} value={option}>
                       {option}
-                      {bookingType === "service"
-                        ? servicePriceLabel(option)
-                        : ""}
+                      {bookingType === "service" ? servicePriceLabel(option) : ""}
                     </option>
                   ))}
                 </select>
@@ -1342,9 +1474,7 @@ function BookingForm() {
               {bookingType === "course" ? (
                 <div className="formInfo fullWidth">
                   Преподавател:{" "}
-                  <strong>
-                    {selectedCourse?.instructor ?? "София Сарандева"}
-                  </strong>
+                  <strong>{selectedCourse?.instructor ?? "София Сарандева"}</strong>
                 </div>
               ) : isAesthetic ? (
                 <div className="formInfo fullWidth">
@@ -1357,15 +1487,11 @@ function BookingForm() {
                   <select
                     name="specialist"
                     value={specialist}
-                    onChange={(event) =>
-                      setSpecialist(event.target.value)
-                    }
+                    onChange={(event) => setSpecialist(event.target.value)}
                     disabled={!salon}
                   >
                     <option value="">
-                      {salon
-                        ? "Без предпочитание"
-                        : "Първо избери салон"}
+                      {salon ? "Без предпочитание" : "Първо избери салон"}
                     </option>
                     {availableSpecialists.map((member) => (
                       <option key={member.name} value={member.name}>
@@ -1378,11 +1504,17 @@ function BookingForm() {
 
               <label>
                 <span>
-                  {bookingType === "course"
-                    ? "Желана начална дата *"
-                    : "Желана дата *"}
+                  {bookingType === "course" ? "Желана начална дата *" : "Желана дата *"}
                 </span>
-                <input name="preferred_date" type="date" required />
+                <input
+                  name="preferred_date"
+                  type="date"
+                  required
+                  min={todayInSofia()}
+                  value={preferredDate}
+                  readOnly={scheduled !== null}
+                  onChange={(event) => setPreferredDate(event.target.value)}
+                />
               </label>
 
               <label>
@@ -1390,14 +1522,18 @@ function BookingForm() {
                 <input
                   name="preferred_time"
                   type="time"
-                  step={900}
+                  step={scheduled ? 60 : 900}
+                  value={preferredTime}
+                  readOnly={scheduled !== null}
+                  onChange={(event) => setPreferredTime(event.target.value)}
                   required
                 />
               </label>
 
               <p className="formHint fullWidth">
-                Наличността се уточнява при потвърждение.
-                За многодневен курс посочи желаната начална дата.
+                {scheduled
+                  ? "Избрани са обявени дата и час. Записването е валидно след потвърждение."
+                  : "Наличността се уточнява при потвърждение. За многодневен курс посочи желаната начална дата."}
               </p>
 
               <label>
@@ -1448,32 +1584,20 @@ function BookingForm() {
             </div>
 
             <p className="formPrivacy">
-              Използваме предоставените данни за връзка с теб
-              относно тази заявка.
+              Използваме предоставените данни за връзка с теб относно тази заявка.
             </p>
-
             <button type="submit" className="formSubmit">
-              {submitting ? "Изпращане…" : "Изпрати заявка"}
-              <span>↗</span>
+              {submitting ? "Изпращане…" : "Изпрати заявка"}<span>↗</span>
             </button>
           </fieldset>
 
-          {error && (
-            <p className="formMessage errorMessage" role="alert">
-              {error}
-            </p>
-          )}
-          {success && (
-            <p className="formMessage successMessage" role="status">
-              {success}
-            </p>
-          )}
+          {error && <p className="formMessage errorMessage" role="alert">{error}</p>}
+          {success && <p className="formMessage successMessage" role="status">{success}</p>}
         </form>
       </div>
     </section>
   );
 }
-
 export default function Home() {
   const [content, setContent] = useState<Content | null>(null);
   const [contentError, setContentError] = useState(false);
@@ -1492,7 +1616,6 @@ export default function Home() {
         if (error || !validContent(data?.data)) {
           throw error ?? new Error("Невалидно съдържание");
         }
-
         if (active) {
           setContent(data.data);
           setContentError(false);
@@ -1503,11 +1626,9 @@ export default function Home() {
     }
 
     void load();
-
     const refresh = () => {
       if (document.visibilityState === "visible") void load();
     };
-
     window.addEventListener("focus", refresh);
     document.addEventListener("visibilitychange", refresh);
 
@@ -1520,35 +1641,25 @@ export default function Home() {
 
   if (!content) {
     return (
-      <main
-        style={{
-          padding: "12vh 8%",
-          background: "#161616",
-          color: "#fff",
-          minHeight: "100vh",
-        }}
-      >
+      <main style={{
+        padding: "12vh 8%",
+        background: "#161616",
+        color: "#fff",
+        minHeight: "100vh",
+      }}>
         <h1>SARANDEV ACADEMY</h1>
         <p role="status">
           {contentError
             ? "Съдържанието временно не е достъпно. Моля, опитайте отново."
             : "Зареждане…"}
         </p>
-
         {contentError && (
-          <button onClick={() => window.location.reload()}>
-            Опитай отново
-          </button>
+          <button onClick={() => window.location.reload()}>Опитай отново</button>
         )}
-
         <p>
-          <a style={{ color: "#d4b785" }} href={`tel:${academyTel}`}>
-            {academyPhone}
-          </a>
+          <a style={{ color: "#d4b785" }} href={`tel:${academyTel}`}>{academyPhone}</a>
           {" · "}
-          <a style={{ color: "#d4b785" }} href="/admin">
-            Админ вход
-          </a>
+          <a style={{ color: "#d4b785" }} href="/admin">Админ вход</a>
         </p>
       </main>
     );
@@ -1565,24 +1676,76 @@ function AcademyHome() {
   const { courses, services, team } = useContext(ContentContext);
   const [modal, setModal] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [schedule, setSchedule] = useState<ScheduledCourse[]>([]);
+  const [scheduleLoading, setScheduleLoading] = useState(true);
+  const [scheduleError, setScheduleError] = useState("");
+  const [scheduleRevision, setScheduleRevision] = useState(0);
+  const [scheduled, setScheduled] = useState<ScheduledCourse | null>(null);
+  const [selectionKey, setSelectionKey] = useState(0);
 
-  const selectedService = services.find(
-    (service) => service.id === modal
-  );
-  const selectedCourse = courses.find(
-    (course) => course.id === modal
-  );
+  useEffect(() => {
+    let active = true;
+    let requestNumber = 0;
 
-  function openBooking() {
+    async function load() {
+      const currentRequest = ++requestNumber;
+      setScheduleLoading(true);
+
+      try {
+        const rows = await loadUpcomingCourses();
+        if (active && currentRequest === requestNumber) {
+          setSchedule(rows);
+          setScheduleError("");
+        }
+      } catch {
+        if (active && currentRequest === requestNumber) {
+          setScheduleError(
+            "Графикът временно не може да се зареди. Можеш да изпратиш запитване чрез формата по-долу."
+          );
+        }
+      } finally {
+        if (active && currentRequest === requestNumber) setScheduleLoading(false);
+      }
+    }
+
+    void load();
+    const refresh = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+
+    return () => {
+      active = false;
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [scheduleRevision]);
+
+  function selectScheduledCourse(row: ScheduledCourse) {
+    if (row.remaining_seats < 1) return;
+    setScheduled(row);
+    setSelectionKey((value) => value + 1);
     setModal(null);
+    setMenuOpen(false);
 
     window.requestAnimationFrame(() => {
       document.getElementById("booking")?.scrollIntoView({
-        behavior: window.matchMedia(
-          "(prefers-reduced-motion: reduce)"
-        ).matches
-          ? "auto"
-          : "smooth",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto" : "smooth",
+      });
+    });
+  }
+
+  const selectedService = services.find((service) => service.id === modal);
+  const selectedCourse = courses.find((course) => course.id === modal);
+
+  function openBooking() {
+    setModal(null);
+    window.requestAnimationFrame(() => {
+      document.getElementById("booking")?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto" : "smooth",
       });
     });
   }
@@ -1592,11 +1755,7 @@ function AcademyHome() {
       <style>{styles}</style>
 
       <header className="header">
-        <a
-          href="#home"
-          className="brand"
-          aria-label="Sarandev Academy — начало"
-        >
+        <a href="#home" className="brand" aria-label="Sarandev Academy — начало">
           SARANDEV<span>ACADEMY</span>
         </a>
 
@@ -1606,9 +1765,7 @@ function AcademyHome() {
           aria-expanded={menuOpen}
           aria-controls="main-navigation"
           onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? "Затвори −" : "Меню +"}
-        </button>
+        >{menuOpen ? "Затвори −" : "Меню +"}</button>
 
         <nav
           id="main-navigation"
@@ -1618,25 +1775,15 @@ function AcademyHome() {
           {[
             ["#about", "За нас"],
             ["#courses", "Обучения"],
+            ["#upcoming", "Предстоящи курсове"],
             ["#services", "Услуги"],
             ["#team", "Екип"],
             ["#gallery", "Галерия"],
             ["#contact", "Контакти"],
           ].map(([href, label]) => (
-            <a
-              key={href}
-              href={href}
-              onClick={() => setMenuOpen(false)}
-            >
-              {label}
-            </a>
+            <a key={href} href={href} onClick={() => setMenuOpen(false)}>{label}</a>
           ))}
-
-          <a
-            href="#booking"
-            className="navCta"
-            onClick={() => setMenuOpen(false)}
-          >
+          <a href="#booking" className="navCta" onClick={() => setMenuOpen(false)}>
             Запиши се <span>↗</span>
           </a>
         </nav>
@@ -1645,57 +1792,38 @@ function AcademyHome() {
       <section id="home" className="hero">
         <div className="heroCopy">
           <p className="eyebrow">
-            <span className="statusDot" />
-            BEAUTY. KNOWLEDGE. CONFIDENCE.
+            <span className="statusDot" />BEAUTY. KNOWLEDGE. CONFIDENCE.
           </p>
-
           <h1>Красотата<br />започва с<br /><em>увереност.</em></h1>
-
           <p className="heroDescription">
             Твоята страст заслужава следваща стъпка.
             Превърни я в умение със Sarandev Academy.
           </p>
-
           <div className="heroActions">
             <a href="#courses" className="button darkButton">
               Открий обученията <span>↗</span>
             </a>
             <a href="#booking" className="textLink">Запази час ↗</a>
           </div>
-
           <div className="heroBottom">
             <span>ТВОЯТ НОВ ПЪТ ЗАПОЧВА ТУК</span>
-            <a
-              href="#about"
-              className="scrollArrow"
-              aria-label="Продължи надолу"
-            >
-              ↓
-            </a>
+            <a href="#about" className="scrollArrow" aria-label="Продължи надолу">↓</a>
           </div>
         </div>
 
         <div className="portrait">
           <Photo
             src="/images/sofia.jpg"
-            fallbacks={[
-              "/images/sSofia.jpg",
-              "/sSofia.jpg",
-              "/sofia.jpg",
-            ]}
+            fallbacks={["/images/sSofia.jpg", "/sSofia.jpg", "/sofia.jpg"]}
             alt="София Сарандева — основател на Sarandev Academy"
             className="portraitImage"
             eager
           />
-
           <div className="portraitShade" />
           <p className="portraitTop">THE WOMAN BEHIND THE ACADEMY</p>
-
           <div className="experienceBadge">
-            <strong>7+</strong>
-            <span>ГОДИНИ<br />СТРАСТ И ОПИТ</span>
+            <strong>7+</strong><span>ГОДИНИ<br />СТРАСТ И ОПИТ</span>
           </div>
-
           <div className="portraitCaption">
             <p>ОСНОВАТЕЛ & ПРЕПОДАВАТЕЛ</p>
             <h2>София Сарандева</h2>
@@ -1704,30 +1832,21 @@ function AcademyHome() {
               className="button lightButton"
               onClick={() => setModal("sofia")}
               aria-haspopup="dialog"
-            >
-              За София — прочети повече <span>↗</span>
-            </button>
+            >За София — прочети повече <span>↗</span></button>
           </div>
-
           <span className="portraitSide">SARANDEV / ACADEMY</span>
         </div>
       </section>
 
       <div className="valuesBar">
-        <span>ОБУЧЕНИЯ</span>
-        <span>ПРАКТИКА</span>
-        <span>КРАСОТА</span>
-        <span>УВЕРЕНОСТ</span>
+        <span>ОБУЧЕНИЯ</span><span>ПРАКТИКА</span>
+        <span>КРАСОТА</span><span>УВЕРЕНОСТ</span>
       </div>
 
       <section id="about" className="section about">
-        <div>
-          <p className="eyebrow">01 / НАШАТА ФИЛОСОФИЯ</p>
-        </div>
-
+        <div><p className="eyebrow">01 / НАШАТА ФИЛОСОФИЯ</p></div>
         <div>
           <h2>Не просто курс.<br /><em>Твоето ново начало.</em></h2>
-
           <div className="aboutColumns">
             <p>
               Зад Sarandev Academy стои София Сарандева —
@@ -1735,7 +1854,6 @@ function AcademyHome() {
               на два салона за красота и преподавател, който
               вярва в потенциала на всеки курсист.
             </p>
-
             <div>
               <p>
                 Учим чрез практика, внимание и споделен опит.
@@ -1747,40 +1865,26 @@ function AcademyHome() {
                 type="button"
                 onClick={() => setModal("sofia")}
                 aria-haspopup="dialog"
-              >
-                Запознай се със София ↗
-              </button>
+              >Запознай се със София ↗</button>
             </div>
           </div>
-
           <div className="stats">
             <div><strong>7+</strong><span>години опит</span></div>
-            <div>
-              <strong>40+</strong>
-              <span>професионални обучения</span>
-            </div>
+            <div><strong>40+</strong><span>професионални обучения</span></div>
             <div><strong>2</strong><span>салона за красота</span></div>
           </div>
         </div>
       </section>
 
-      <section
-        className="materialsOffer"
-        aria-labelledby="materials-title"
-      >
+      <section className="materialsOffer" aria-labelledby="materials-title">
         <div className="materialsNumber">
-          <span className="pill">
-            ПРЕДИМСТВО ЗА НАШИТЕ КУРСИСТИ
-          </span>
+          <span className="pill">ПРЕДИМСТВО ЗА НАШИТЕ КУРСИСТИ</span>
           <strong>−20<span>%</span></strong>
           <small>ЗА ПРОДУКТИ ЗА МАНИКЮР</small>
         </div>
-
         <div className="materialsCopy">
           <p className="eyebrow">ОБУЧЕНИЕТО Е САМО НАЧАЛОТО</p>
-          <h2 id="materials-title">
-            Нови умения.<br /><em>Още едно предимство.</em>
-          </h2>
+          <h2 id="materials-title">Нови умения.<br /><em>Още едно предимство.</em></h2>
           <p>
             Запиши се и завърши успешно курс в
             <strong> Sarandev Academy</strong>, за да се
@@ -1790,16 +1894,11 @@ function AcademyHome() {
               от VELOUR & THE BLACK BOTTLE.
             </strong>
           </p>
-
-          <div
-            className="materialsBrands"
-            aria-label="VELOUR и THE BLACK BOTTLE"
-          >
+          <div className="materialsBrands" aria-label="VELOUR и THE BLACK BOTTLE">
             <span>VELOUR</span>
             <span className="materialsAmpersand">&</span>
             <span>THE BLACK BOTTLE</span>
           </div>
-
           <a href="#courses" className="button goldButton">
             Избери своето обучение <span>↗</span>
           </a>
@@ -1824,9 +1923,7 @@ function AcademyHome() {
           {courses.map((course, index) => (
             <article
               className={`courseCard ${
-                (Math.floor(index / 2) + index % 2) % 2 === 1
-                  ? "darkCard"
-                  : ""
+                (Math.floor(index / 2) + index % 2) % 2 === 1 ? "darkCard" : ""
               }`}
               key={course.id}
             >
@@ -1834,58 +1931,49 @@ function AcademyHome() {
                 <span className="pill">{course.label}</span>
                 <span>{String(index + 1).padStart(2, "0")} /</span>
               </div>
-
               <div className="coursePhoto">
-                <Photo
-                  src={course.image}
-                  alt={course.imageAlt}
-                />
+                <Photo src={course.image} alt={course.imageAlt} />
               </div>
-
               <div className="courseBody">
                 <p className="courseMeta">{course.meta}</p>
                 <h3>{course.title}<br />{course.subtitle}</h3>
-                <p className="courseDescription">
-                  {course.description}
-                </p>
-
+                <p className="courseDescription">{course.description}</p>
                 <div className="tags">
-                  {course.tags.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
+                  {course.tags.map((tag) => <span key={tag}>{tag}</span>)}
                 </div>
-
                 <div className="courseFooter">
                   <div className="price">
                     {euro(course.variants[0].price)}
-
                     <small>
                       {course.variants
                         .map((v) => `${v.label}: ${euro(v.price)}`)
                         .join(" · ")}
                     </small>
-
                     <small className="onlinePrice">
-                      През сайта от{" "}
-                      {euro(discounted(course.variants[0].price))}
+                      През сайта от {euro(discounted(course.variants[0].price))}
                       {" "}(−5%)
                     </small>
                   </div>
-
                   <button
                     type="button"
                     className="courseButton"
                     onClick={() => setModal(course.id)}
                     aria-haspopup="dialog"
-                  >
-                    Виж програмата <span>↗</span>
-                  </button>
+                  >Виж програмата <span>↗</span></button>
                 </div>
               </div>
             </article>
           ))}
         </div>
       </section>
+
+      <UpcomingCourses
+        rows={schedule}
+        loading={scheduleLoading}
+        error={scheduleError}
+        onRetry={() => setScheduleRevision((value) => value + 1)}
+        onSelect={selectScheduledCourse}
+      />
 
       <section className="section process">
         <div className="sectionHeading">
@@ -1895,36 +1983,21 @@ function AcademyHome() {
           </div>
           <span className="processSymbol" aria-hidden="true">↗</span>
         </div>
-
         <div className="processGrid">
           {[
-            [
-              "Разбираш.",
-              "Започваме с теорията, материалите и правилната подготовка.",
-            ],
-            [
-              "Практикуваш.",
-              "Прилагаш наученото с демонстрации и насоки от преподавателя.",
-            ],
-            [
-              "Надграждаш.",
-              "Развиваш техниката, прецизността и увереността си.",
-            ],
+            ["Разбираш.", "Започваме с теорията, материалите и правилната подготовка."],
+            ["Практикуваш.", "Прилагаш наученото с демонстрации и насоки от преподавателя."],
+            ["Надграждаш.", "Развиваш техниката, прецизността и увереността си."],
           ].map(([title, text], index) => (
             <article className="processCard" key={title}>
-              <span>0{index + 1}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
+              <span>0{index + 1}</span><h3>{title}</h3><p>{text}</p>
             </article>
           ))}
         </div>
       </section>
 
       <section className="statement">
-        <p>
-          Талантът е началото.<br />
-          <em>Практиката прави разликата.</em>
-        </p>
+        <p>Талантът е началото.<br /><em>Практиката прави разликата.</em></p>
         <small>SARANDEV ACADEMY</small>
       </section>
 
@@ -1939,42 +2012,29 @@ function AcademyHome() {
             създадени с внимание към теб.
           </p>
         </div>
-
         <div className="serviceGrid">
           {services.map((service, index) => (
             <button
-              className={`serviceTile ${
-                service.id === "service-3" ? "guestServiceTile" : ""
-              }`}
+              className={`serviceTile ${service.id === "service-3" ? "guestServiceTile" : ""}`}
               type="button"
               key={service.id}
               onClick={() => setModal(service.id)}
               aria-haspopup="dialog"
             >
               <span className="tileTop">
-                <span>0{index + 1} / BEAUTY SERVICES</span>
-                <span>↗</span>
+                <span>0{index + 1} / BEAUTY SERVICES</span><span>↗</span>
               </span>
-
               <span className="servicePhoto">
                 <Photo
                   src={service.image}
-                  fallbacks={
-                    service.id === "service-3"
-                      ? gulselFallbacks
-                      : []
-                  }
+                  fallbacks={service.id === "service-3" ? gulselFallbacks : []}
                   alt={service.alt}
                 />
               </span>
-
               <span className="tileTitle">{service.title}</span>
-              <span className="tileDescription">
-                {service.description}
-              </span>
+              <span className="tileDescription">{service.description}</span>
               <span className="tileBottom">
-                Разгледай услугите
-                <span aria-hidden="true">+</span>
+                Разгледай услугите<span aria-hidden="true">+</span>
               </span>
             </button>
           ))}
@@ -1995,16 +2055,17 @@ function AcademyHome() {
             Разгледай света на академията отблизо.
           </p>
         </div>
-
         <PhotoGallery photos={galleryPhotos} filters />
-
-        <p className="galleryBottom">
-          МАЛКИТЕ ДЕТАЙЛИ. ГОЛЯМОТО ВДЪХНОВЕНИЕ.
-        </p>
+        <p className="galleryBottom">МАЛКИТЕ ДЕТАЙЛИ. ГОЛЯМОТО ВДЪХНОВЕНИЕ.</p>
       </section>
 
       <ReviewsSection />
-      <BookingForm />
+      <BookingForm
+        scheduled={scheduled}
+        selectionKey={selectionKey}
+        onClearSchedule={() => setScheduled(null)}
+        onBooked={() => setScheduleRevision((value) => value + 1)}
+      />
 
       <section id="contact" className="section contactSection">
         <div className="sectionHeading">
@@ -2013,8 +2074,7 @@ function AcademyHome() {
             <h2>Нека се срещнем.<br /><em>Твоята стъпка е сега.</em></h2>
           </div>
           <a className="contactPhone" href={`tel:${academyTel}`}>
-            <span>ЗА ОБУЧЕНИЯ И ИНФОРМАЦИЯ</span>
-            {academyPhone} ↗
+            <span>ЗА ОБУЧЕНИЯ И ИНФОРМАЦИЯ</span>{academyPhone} ↗
           </a>
         </div>
 
@@ -2022,18 +2082,14 @@ function AcademyHome() {
           {locations.map((location, index) => (
             <article className="locationCard" key={location.id}>
               <div className="locationTop">
-                <span>0{index + 1} / НАШИЯТ САЛОН</span>
-                <span>↗</span>
+                <span>0{index + 1} / НАШИЯТ САЛОН</span><span>↗</span>
               </div>
-
               <h3>{location.city}<span>.</span></h3>
               <p>{location.address}</p>
 
               <div className="locationTeam">
                 {team
-                  .filter(
-                    (member) => member.city === location.city
-                  )
+                  .filter((member) => member.city === location.city)
                   .map((member) => (
                     <a
                       className="locationMember"
@@ -2048,22 +2104,14 @@ function AcademyHome() {
                           alt={member.name}
                         />
                       </span>
-
                       <span className="locationMemberInfo">
                         <strong>{member.name}</strong>
                         <small>{member.role}</small>
                         <span className="locationMemberPhone">
-                          {member.phone}
-                          {" "}<span aria-hidden="true">↗</span>
+                          {member.phone}{" "}<span aria-hidden="true">↗</span>
                         </span>
                       </span>
-
-                      <span
-                        className="locationMemberArrow"
-                        aria-hidden="true"
-                      >
-                        ↗
-                      </span>
+                      <span className="locationMemberArrow" aria-hidden="true">↗</span>
                     </a>
                   ))}
               </div>
@@ -2073,9 +2121,7 @@ function AcademyHome() {
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.query)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-              >
-                Отвори адреса в Google Maps <span>↗</span>
-              </a>
+              >Отвори адреса в Google Maps <span>↗</span></a>
             </article>
           ))}
         </div>
@@ -2083,11 +2129,8 @@ function AcademyHome() {
         <div className="socialStrip">
           <div>
             <p className="eyebrow">ОСТАНИ В НАШИЯ СВЯТ</p>
-            <p>
-              Вдъхновение, обучения и красота — последвай ни.
-            </p>
+            <p>Вдъхновение, обучения и красота — последвай ни.</p>
           </div>
-
           <div className="socialLinks">
             {socialLinks.map((social) => (
               <a
@@ -2097,19 +2140,11 @@ function AcademyHome() {
                 rel="noopener noreferrer"
                 aria-label={`Sarandev Academy в ${social.name} — отваря се в нов раздел`}
               >
-                <span className="socialButtonIcon">
-                  <SocialIcon name={social.id} />
-                </span>
+                <span className="socialButtonIcon"><SocialIcon name={social.id} /></span>
                 <span className="socialButtonText">
-                  <small>{social.label}</small>
-                  <strong>{social.name}</strong>
+                  <small>{social.label}</small><strong>{social.name}</strong>
                 </span>
-                <span
-                  className="socialButtonArrow"
-                  aria-hidden="true"
-                >
-                  ↗
-                </span>
+                <span className="socialButtonArrow" aria-hidden="true">↗</span>
               </a>
             ))}
           </div>
@@ -2117,28 +2152,20 @@ function AcademyHome() {
       </section>
 
       <section className="closing">
-        <span className="closingOutline" aria-hidden="true">
-          ACADEMY
-        </span>
+        <span className="closingOutline" aria-hidden="true">ACADEMY</span>
         <div>
           <p className="eyebrow">НАПРАВИ СЛЕДВАЩАТА СТЪПКА</p>
           <h2>Твоят талант.<br /><em>Твоето бъдеще.</em></h2>
-          <a href="#booking" className="button lightButton">
-            Изпрати заявка <span>↗</span>
-          </a>
+          <a href="#booking" className="button lightButton">Изпрати заявка <span>↗</span></a>
         </div>
       </section>
 
       <footer className="footer">
-        <a href="#home" className="brand">
-          SARANDEV<span>ACADEMY</span>
-        </a>
+        <a href="#home" className="brand">SARANDEV<span>ACADEMY</span></a>
         <p>Красота. Знания. Увереност.</p>
         <span>© 2026 Sarandev Academy</span>
         <a href="/admin">Админ вход</a>
-        <a href="#home" className="backTop" aria-label="Към началото">
-          ↑
-        </a>
+        <a href="#home" className="backTop" aria-label="Към началото">↑</a>
       </footer>
 
       <Dialog
@@ -2160,57 +2187,34 @@ function AcademyHome() {
             <p className="modalLead">
               Професионализъм, отдаденост и стремеж към съвършенство!
             </p>
-
-            {biography.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-
+            {biography.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             <div className="infoBox">
               <h3>Обучения в Хасково и Пловдив</h3>
-              <p>
-                София провежда обученията в двата града.
-                За информация и записване:
-              </p>
-              <a className="textLink" href={`tel:${academyTel}`}>
-                {academyPhone} ↗
-              </a>
+              <p>София провежда обученията в двата града. За информация и записване:</p>
+              <a className="textLink" href={`tel:${academyTel}`}>{academyPhone} ↗</a>
             </div>
-
             <button
               className="button darkButton modalCta"
               type="button"
               onClick={openBooking}
-            >
-              Към заявка за обучение <span>↗</span>
-            </button>
+            >Към заявка за обучение <span>↗</span></button>
           </div>
         )}
 
         {selectedCourse && (
           <div className="modalCopy">
-            <p className="eyebrow">
-              {selectedCourse.label} / {selectedCourse.meta}
-            </p>
-            <h2>
-              {selectedCourse.title}<br />
-              <em>{selectedCourse.subtitle}</em>
-            </h2>
-            <p className="modalLead">
-              {selectedCourse.description}
-            </p>
+            <p className="eyebrow">{selectedCourse.label} / {selectedCourse.meta}</p>
+            <h2>{selectedCourse.title}<br /><em>{selectedCourse.subtitle}</em></h2>
+            <p className="modalLead">{selectedCourse.description}</p>
 
             <div className="courseProgram">
-              {selectedCourse.program
-                .split("\n")
-                .filter(Boolean)
-                .map((line, index) => (
-                  <p key={index}>{line}</p>
-                ))}
+              {selectedCourse.program.split("\n").filter(Boolean).map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
             </div>
 
             <div className="infoBox">
               <h3>Цена и записване</h3>
-
               {selectedCourse.variants.map((v, i) => (
                 <p key={i}>
                   {v.label}: <strong>{euro(v.price)}</strong><br />
@@ -2218,20 +2222,16 @@ function AcademyHome() {
                   <strong>{euro(discounted(v.price))}</strong>
                 </p>
               ))}
-
               <p>
                 Преподавател: {selectedCourse.instructor}.
                 Градове: Хасково и Пловдив.
               </p>
             </div>
-
             <button
               className="button darkButton modalCta"
               type="button"
               onClick={openBooking}
-            >
-              Към заявка за обучение <span>↗</span>
-            </button>
+            >Към заявка за обучение <span>↗</span></button>
           </div>
         )}
 
@@ -2239,23 +2239,16 @@ function AcademyHome() {
           <div className="modalCopy">
             <p className="eyebrow">SARANDEV ACADEMY / УСЛУГИ</p>
             <h2>{selectedService.title}</h2>
-            <p className="modalLead">
-              {selectedService.description}
-            </p>
+            <p className="modalLead">{selectedService.description}</p>
 
             <ul className="serviceModalList">
               {selectedService.items.map((item, index) => (
                 <li key={item}>
-                  <small>
-                    {String(index + 1).padStart(2, "0")}
-                  </small>
+                  <small>{String(index + 1).padStart(2, "0")}</small>
                   <span>
                     {item}
                     {selectedService.itemPrices[item] != null && (
-                      <strong>
-                        {" · "}
-                        {euro(selectedService.itemPrices[item]!)}
-                      </strong>
+                      <strong>{" · "}{euro(selectedService.itemPrices[item]!)}</strong>
                     )}
                   </span>
                 </li>
@@ -2265,25 +2258,13 @@ function AcademyHome() {
             {selectedService.id === "service-3" && (
               <>
                 <div className="modalGuestPhoto">
-                  <Photo
-                    src={gulselPhoto}
-                    fallbacks={gulselFallbacks}
-                    alt="Гюнюл Мерт"
-                  />
+                  <Photo src={gulselPhoto} fallbacks={gulselFallbacks} alt="Гюнюл Мерт" />
                 </div>
-
                 <div className="infoBox">
                   <h3>Гюнюл Мерт</h3>
-                  <p>
-                    Гостува всеки месец от Турция
-                    в Хасково и Пловдив.
-                  </p>
-                  <p>
-                    Филър, с който работи: <strong>Elasty</strong>.
-                  </p>
-                  <p>
-                    Датите се уточняват предварително при записване.
-                  </p>
+                  <p>Гостува всеки месец от Турция в Хасково и Пловдив.</p>
+                  <p>Филър, с който работи: <strong>Elasty</strong>.</p>
+                  <p>Датите се уточняват предварително при записване.</p>
                 </div>
               </>
             )}
@@ -2291,19 +2272,10 @@ function AcademyHome() {
             {selectedService.specialistRole && (
               <div className="modalSpecialists">
                 <h3>Специалисти</h3>
-
                 {team
-                  .filter((member) =>
-                    member.role.includes(
-                      selectedService.specialistRole
-                    )
-                  )
+                  .filter((member) => member.role.includes(selectedService.specialistRole))
                   .map((member) => (
-                    <a
-                      className="modalMember"
-                      key={member.name}
-                      href={`tel:${member.tel}`}
-                    >
+                    <a className="modalMember" key={member.name} href={`tel:${member.tel}`}>
                       <span className="modalMemberPhoto">
                         <Photo
                           src={member.image}
@@ -2325,17 +2297,39 @@ function AcademyHome() {
               className="button darkButton modalCta"
               type="button"
               onClick={openBooking}
-            >
-              Към записване <span>↗</span>
-            </button>
+            >Към записване <span>↗</span></button>
           </div>
         )}
       </Dialog>
     </main>
   );
 }
-
 const styles = `
+.upcomingSection{background:#eeece6}
+.scheduleCities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
+.scheduleCity{min-width:0}
+.scheduleCity>h3{font-size:25px;margin-bottom:24px}
+.scheduleCard{background:#fff;border:1px solid #ddd6c9;padding:28px;margin-bottom:18px}
+.scheduleCard h4{font-size:24px;line-height:1.3;margin:15px 0}
+.scheduleCard p{font-size:13px;line-height:1.8;margin-bottom:7px}
+.scheduleCard .scheduleDate{color:#8b6a35;font-weight:700;font-size:15px}
+.scheduleNote{white-space:pre-wrap;overflow-wrap:anywhere}
+.scheduleCardBottom{display:flex;justify-content:space-between;align-items:center;gap:18px;border-top:1px solid #e7e2d9;margin-top:20px;padding-top:20px;flex-wrap:wrap}
+.scheduleCard .schedulePrice{font-weight:700;font-size:22px}
+.schedulePrice small{font-size:11px;font-weight:400}
+.scheduleCard .scheduleStandard{font-size:11px;color:#737373}
+.scheduleSeats{font-weight:700}
+.scheduleCard button:disabled{opacity:.5;cursor:not-allowed}
+.scheduleNotice{background:#fff;padding:24px;line-height:1.8}
+.scheduleFootnote{font-size:12px;line-height:1.8;margin-top:24px!important;color:#666}
+.scheduleSelection{padding:24px;background:#eee5d4;border-left:3px solid #a6844f;margin-bottom:24px;line-height:1.9}
+.scheduleSelection p{font-size:13px}
+@media(max-width:900px){
+.scheduleCities{grid-template-columns:1fr}
+.scheduleCard{padding:22px}
+.scheduleCity>h3{font-size:23px}
+}
+
 .discountBanner{display:flex;align-items:center;gap:32px;padding:35px;margin:0 0 32px;background:#171717;color:#fff;border:1px solid #b3925e}
 .discountPercent{font-size:clamp(58px,7vw,100px);line-height:1;color:#d6b47a;letter-spacing:-5px}
 .discountBanner h3{font-size:clamp(23px,3vw,35px);line-height:1.2;margin:10px 0}

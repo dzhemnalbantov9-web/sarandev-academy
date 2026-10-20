@@ -1,0 +1,211 @@
+.upcomingSection {
+  background: #eae5db;
+}
+
+.upcomingCities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px;
+}
+
+.upcomingCity {
+  min-width: 0;
+}
+
+.upcomingCityHeading {
+  padding: 25px 28px;
+  background: #171717;
+  color: #fff;
+  border-top: 3px solid #c7a66d;
+}
+
+.upcomingCityHeading .eyebrow {
+  color: #c7a66d;
+  margin-bottom: 12px !important;
+}
+
+.upcomingCityHeading h3 {
+  font-size: 43px;
+  font-weight: 500;
+  letter-spacing: -1.5px;
+}
+
+.upcomingCityHeading h3 span {
+  color: #c7a66d;
+}
+
+.upcomingCard {
+  padding: 28px;
+  margin-top: 18px;
+  border: 1px solid #c8bba5;
+  background: #faf9f6;
+}
+
+.upcomingDate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #d9d0c2;
+  font-size: 12px;
+  color: #80633d;
+}
+
+.upcomingDate strong {
+  white-space: nowrap;
+}
+
+.upcomingCard h4 {
+  margin: 22px 0 12px;
+  font-size: 25px;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+.upcomingVariant {
+  font-size: 12px;
+  color: #777;
+}
+
+.upcomingNote {
+  margin-top: 18px !important;
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.upcomingSeats {
+  margin-top: 20px !important;
+  font-size: 12px;
+  font-weight: 700;
+  color: #80633d;
+}
+
+.upcomingBottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid #d9d0c2;
+}
+
+.upcomingBottom > div {
+  display: grid;
+  gap: 5px;
+}
+
+.upcomingBottom small {
+  font-size: 10px;
+  color: #777;
+}
+
+.upcomingBottom strong {
+  font-size: 27px;
+  color: #987744;
+  font-weight: 500;
+}
+
+.upcomingBottom .button {
+  padding: 15px 17px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.upcomingBottom button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.upcomingEmpty {
+  padding: 28px;
+  font-size: 14px;
+  line-height: 1.9;
+  background: #faf9f6;
+  border: 1px solid #d9d0c2;
+}
+
+.upcomingError {
+  padding: 22px;
+  border: 1px solid #c9b99b;
+  background: #faf9f6;
+  line-height: 1.8;
+}
+
+.upcomingError button {
+  padding: 10px 16px;
+  margin-top: 15px;
+  border: 1px solid #888;
+  background: #fff;
+}
+
+.scheduledBookingNotice {
+  padding: 20px;
+  margin: 0 0 25px;
+  border: 1px solid #b89c6c;
+  background: #f2e9d8;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.scheduledBookingNotice button {
+  display: block;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid #a68b5f;
+  color: #584528;
+}
+
+.saForm select:disabled {
+  background: #f2eee6;
+  color: #555;
+  opacity: 1;
+}
+
+.saForm input[readonly] {
+  background: #f2eee6;
+  color: #555;
+}
+
+@media (max-width: 900px) {
+  .upcomingBottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 760px) {
+  .upcomingCities {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+
+  .upcomingCityHeading h3 {
+    font-size: 37px;
+  }
+
+  .upcomingCard {
+    padding: 23px;
+  }
+
+  .upcomingBottom {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 380px) {
+  .upcomingBottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .upcomingDate {
+    flex-wrap: wrap;
+  }
+}
